@@ -1,3 +1,4 @@
+//Importing necessary files like React, App, and styles.
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
