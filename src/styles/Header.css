@@ -1,0 +1,121 @@
+/* Reset and base styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Calibri, sans-serif;
+  }
+  
+  /* NAVBAR STYLING */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ffffff4b; 
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  
+  /* LOGO */
+  .logo a {
+    font-size: 16px;
+    font-weight: 400;
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+  }
+  
+  /* MENU LIST */
+  .menu {
+    display: flex;
+    gap: 25px;
+    list-style: none;
+  }
+  
+  /* MENU LINKS */
+  .menu li a {
+    color: black;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 400;
+    transition: color 0.3s ease;
+    position: relative; /* To position the pseudo-elements */
+    padding: 10px 0; /* Padding for space around the text */
+  }
+  
+  /* Horizontal line effects on hover */
+  .menu li a::before,
+  .menu li a::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background-color: #fa00ddf0; /* Purple line color to match hover color */
+    left: 0;
+    transition: all 0.3s ease;
+  }
+  
+  .menu li a::before {
+    top: 0; /* Position the line above the text */
+    transform: scaleX(0); /* Initially, hide the line */
+    transform-origin: left;
+  }
+  
+  .menu li a::after {
+    bottom: 0; /* Position the line below the text */
+    transform: scaleX(0); /* Initially, hide the line */
+    transform-origin: left;
+  }
+  
+  /* Hover effect: show the lines */
+  .menu li a:hover::before,
+  .menu li a:hover::after {
+    transform: scaleX(1); /* Expand the lines on hover */
+  }
+  
+  /* Hover effect on the link itself */
+  .menu li a:hover,
+  .menu li a.active {
+    color: #fa00ddf0; /* Change the color of the link on hover */
+  }
+  
+  /* MENU ICON FOR MOBILE */
+  .menu-icon {
+    display: none;
+    font-size: 28px;
+    color: black;
+    cursor: pointer;
+  }
+  
+  /* RESPONSIVE MENU */
+  @media (max-width: 768px) {
+    .menu {
+      position: absolute;
+      top: 70px; /* below the fixed navbar */
+      left: 0;
+      width: 100%;
+      flex-direction: column;
+      background-color: #808080;
+      display: none;
+      text-align: center;
+      padding: 20px 0;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    }
+  
+    .menu.active {
+      display: flex;
+    }
+  
+    .menu li {
+      margin: 10px 0;
+    }
+  
+    .menu-icon {
+      display: block;
+    }
+  }
+  

@@ -1,0 +1,21 @@
+/* Base footer styling */
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ffffff42; 
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-size: 14px;
+  }
+  
+  /* Styling for the copyright text */
+  .footer p {
+    margin: 0;
+    line-height: 40px;
+    font-size: 0.7em;
+    color: #000000;
+  }
+  

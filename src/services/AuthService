@@ -1,0 +1,12 @@
+import api from '../services/api.config';
+// Login function
+export const loginUser = async (email, password) => {
+    const response = await api.post('/account/login', { email, password });
+    return response.data;  // Return the response data (e.g., token)
+  };
+  
+  // Register function
+  export const registerUser = async (email, password) => {
+    const response = await api.post('/account/register', { email, password });
+    return response.data;  // Return the response data (e.g., success message)
+  };
