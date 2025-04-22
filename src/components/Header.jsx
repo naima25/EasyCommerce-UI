@@ -38,10 +38,10 @@ const Header = () => {
         <li>
           <Link
             to="/categories"
-            className={location.pathname === "/categories" ? "active" : ""}
+            className={location.pathname === "/our-products" ? "active" : ""}
             onClick={closeMenu}
           >
-            Categories
+            Our Products
           </Link>
         </li>
         <li>

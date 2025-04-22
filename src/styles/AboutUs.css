@@ -1,0 +1,104 @@
+/* Account for fixed header */
+.about-us-container {
+    padding-top: 100px; /* Clear fixed header */
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* Content styling */
+  .about-content {
+    padding: 0 20px;
+  }
+  
+  /* Mission section (now the first element) */
+  .mission-section {
+    margin-bottom: 50px;
+    text-align: center;
+  }
+  
+  .mission-section h2 {
+    font-size: 1.8rem;
+    color: #2c3e50;
+    margin-bottom: 20px;
+  }
+  
+  .mission-section p {
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+  
+  /* Story section */
+  .story-section {
+    margin-bottom: 50px;
+  }
+  
+  .story-content {
+    background: #f9f9f9;
+    padding: 30px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  .story-content h2 {
+    font-size: 1.8rem;
+    color: #2c3e50;
+    margin-bottom: 20px;
+  }
+  
+  /* Values section */
+  .values-section {
+    margin-bottom: 50px;
+  }
+  
+  .values-section h2 {
+    font-size: 1.8rem;
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  /* Cards */
+  .value-cards {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .card {
+    flex: 1;
+    min-width: 250px;
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .card h3 {
+    color: #3498db;
+    margin-bottom: 10px;
+  }
+  
+  /* Button */
+  .cta-button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 25px;
+    background: #ff06e6;
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+  }
+  
+  .cta-button:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+  }

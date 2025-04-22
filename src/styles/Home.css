@@ -1,30 +1,66 @@
-/* styles/Home.css */
+/* Account for fixed header */
+.home-container {
+  padding-top: 100px; 
+  padding-bottom: 100px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
 
-.home {
-    display: flex;
-    flex-direction: column;   /* Stack the items vertically */
-    justify-content: flex-start;   /* Align content to the top */
-    align-items: flex-start;   /* Align content to the left */
-    padding: 20px;
-    margin-top: 80px;   /* Adjust to avoid clash with the header */
-    box-sizing: border-box;   /* Make sure padding doesn't affect width/height */
-  }
-  
-  .home h1, .home p {
-    margin: 0;   /* Remove default margin */
-    padding: 10px 0;   /* Add some padding between text */
-  }
-  
-  .home h1 {
-    font-size: 2rem;   /* Medium font size for the main title */
-    font-weight: bold;
-    color: #333;   /* Dark color for the title */
-    text-align: left;   /* Ensure the title aligns to the left */
-  }
-  
-  .home p {
-    font-size: 1rem;   /* Smaller font for the description */
-    color: #555;   /* Lighter gray for text */
-    text-align: left;   /* Ensure the description aligns to the left */
-  }
-  
+/* Hero section */
+.hero {
+  text-align: center;
+  padding: 60px 20px;
+
+  border-radius: 10px;
+  margin-bottom: 40px;
+}
+
+
+.hero h1 {
+  font-family: Calibri, sans-serif;
+  font-size: 2.0rem; 
+  margin-bottom: 10px;
+  color: #2c4550;
+}
+
+/* Supporting text */
+.hero p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: #555;
+}
+
+/* Button / link */
+.hero a {
+  margin-top: 15px;
+  display: inline-block;
+  text-decoration: none;
+  background-color: #f30fd8;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+/* Card styles (can keep as is) */
+.card-grid {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.card {
+  width: 200px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.card img {
+  width: 100%;
+  max-height: 150px;
+  object-fit: contain;
+  border-radius: 5px;
+}
