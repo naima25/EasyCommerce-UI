@@ -1,12 +1,26 @@
-import React from 'react';
-import '../styles/productcard.css';  
+import React, { useState } from 'react';
+import { useCart } from '../context/CartContext'; // 🛒 Import the cart context
+import '../styles/productcard.css';
 
 const ProductCard = ({ product }) => {
-  const { name, price, imageUrl } = product;
+  const { addToCart, updateQuantity } = useCart(); // 🛒 Get addToCart from context
+  const { name, price, imageUrl, id } = product;
+
+  const [quantity, setQuantity] = useState(1); 
 
   const handleAddToCart = () => {
-    // Add logic to handle adding to the cart (you can expand this later)
-    console.log(`Added ${name} to cart`);
+    addToCart({ ...product, quantity }); // 🛒 
+    setQuantity(1);
+  };
+
+  const handleIncrease = () => {
+    setQuantity(prev => prev + 1);
+  };
+
+  const handleDecrease = () => {
+    if (quantity > 1) {
+      setQuantity(prev => prev - 1);
+    }
   };
 
   return (
@@ -19,15 +33,15 @@ const ProductCard = ({ product }) => {
       <h3>{name}</h3>
       <p>${price.toFixed(2)}</p>
 
-      {/* Add to Cart button */}
       <div className="add-to-cart-container">
         <button className="add-to-cart-button" onClick={handleAddToCart}>
           Add to Cart
         </button>
+
         <div className="quantity-buttons">
-          <button>-</button>
-          <span>1</span>
-          <button>+</button>
+          <button onClick={handleDecrease}>-</button>
+          <span>{quantity}</span>
+          <button onClick={handleIncrease}>+</button>
         </div>
       </div>
     </div>

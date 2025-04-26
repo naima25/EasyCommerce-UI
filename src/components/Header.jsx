@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../styles/Header.css";
-import { useAppContext } from "../context/AppContext"; // Updated import
-
+import { useAppContext } from "../context/AppContext"; 
+import { useCart } from "../context/CartContext"; 
+import { FaShoppingCart } from "react-icons/fa"; // ✅ cart icon
 
 const Header = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const { isAuthenticated, logout, getTotalItems } = useAppContext();
+  const { cartItems } = useCart(); // ✅ get cartItems
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -22,6 +24,8 @@ const Header = () => {
     logout();
     navigate("/home");
   };
+
+  const totalCartQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <nav>
@@ -71,23 +75,22 @@ const Header = () => {
             Wishlist
           </Link>
         </li>
-        
+
+        {/* ✅ Cart link updated nicely */}
         <li className="nav-cart-item">
-        <Link
-          to="/cart"
-          className={`cart-link ${location.pathname === "/cart" ? "active" : ""}`}
-          onClick={closeMenu}
-        >
-          <span className="cart-text">Cart</span>
-          {getTotalItems() > 0 && (
-            <span className="cart-counter">{getTotalItems()}</span>
-          )}
-        </Link>
-      </li>
+          <Link
+            to="/cart"
+            className={`cart-link ${location.pathname === "/cart" ? "active" : ""}`}
+            onClick={closeMenu}
+          >
+            <span className="cart-text">
+              Cart <FaShoppingCart className="cart-icon" style={{ marginLeft: "5px" }} />
+              {totalCartQuantity > 0 && <span className="cart-counter">({totalCartQuantity})</span>}
+            </span>
+          </Link>
+        </li>
 
-
-        {/* Conditional rendering for Account/Logout/Profile */}
-        {isAuthenticated && (
+        {isAuthenticated ? (
           <>
             <li>
               <Link
@@ -99,17 +102,12 @@ const Header = () => {
               </Link>
             </li>
             <li>
-              <Link
-                to="#"
-
-                onClick={handleLogout} // Call logout and redirect to home
-              >
+              <Link to="#" onClick={handleLogout}>
                 Logout
               </Link>
             </li>
           </>
-        )}
-        {!isAuthenticated && (
+        ) : (
           <li>
             <Link
               to="/account"
@@ -121,6 +119,7 @@ const Header = () => {
           </li>
         )}
       </ul>
+
       <div className="menu-icon" onClick={toggleMenu}>
         &#9776;
       </div>
