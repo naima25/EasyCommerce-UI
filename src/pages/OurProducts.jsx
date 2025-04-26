@@ -1,18 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import '../styles/OurProducts.css';
+import ProductCard from '../components/ProductCard';  // Fixed the import statement
+import '../styles/OurProducts.css';  // Assuming this is the correct path
 
 const OurProducts = () => {
-  const [categories, setCategories] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [categories, setCategories] = useState([]); // State for categories
+  const [products, setProducts] = useState([]); // State for all products
+  const [filteredProducts, setFilteredProducts] = useState([]); // State for filtered products
   const [loading, setLoading] = useState({
     categories: true,
-    products: true
+    products: true,
   });
-  const [error, setError] = useState(null);
-  const [activeCategory, setActiveCategory] = useState(null);
+  const [error, setError] = useState(null); // State for error handling
+  const [activeCategory, setActiveCategory] = useState(null); // State for active category
 
+    // Function to shuffle products randomly
+    const shuffleArray = (array) => {
+      return array.sort(() => Math.random() - 0.5); // Shuffle using random number generator
+    };
+
+  // Fetch categories and products on component mount
   useEffect(() => {
     // Fetch categories
     axios.get('http://localhost:5172/api/category')
@@ -25,11 +32,11 @@ const OurProducts = () => {
         setLoading(prev => ({ ...prev, categories: false }));
       });
 
-    // Fetch all products
+    // Fetch all products initially
     axios.get('http://localhost:5172/api/product')
       .then((response) => {
         setProducts(response.data);
-        setFilteredProducts(response.data);
+        setFilteredProducts(response.data); // Initially, display all products
         setLoading(prev => ({ ...prev, products: false }));
       })
       .catch((err) => {
@@ -38,26 +45,37 @@ const OurProducts = () => {
       });
   }, []);
 
-  const handleCategoryClick = (categoryId) => {
-    setActiveCategory(categoryId);
-    if (categoryId) {
-      const filtered = products.filter(product =>
-        product.productCategories?.some(pc => pc.categoryId === categoryId)
-      );
-      setFilteredProducts(filtered);
-    } else {
-      setFilteredProducts(products);
+  const handleCategoryClick = (categoryName) => {
+    setActiveCategory(categoryName);
+  
+    // Fetch products based on the encoded category name
+    if (categoryName) {
+      axios.get(`http://localhost:5172/api/Product/byCategory?categoryName=${encodeURIComponent(categoryName)}`)
+        .then((response) => {
+          setFilteredProducts(response.data); // Set filtered products based on category
+        })
+        .catch((err) => {
+          setError(err.message);
+        });
     }
   };
+  
 
+  // Handle "View All Products" button click
+  const viewAllProducts = () => {
+    setActiveCategory(null); // Reset active category
+    setFilteredProducts(products); // Reset to show all products
+  };
+
+  // Render loading or error messages if needed
   if (loading.categories || loading.products) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="our-products-container">
-      {/* Top Text for Categories */}
+      {/* "View Our Products" Button */}
       <div className="categories-header">
-        <span>Categories</span>
+        <button onClick={viewAllProducts}>View Our Products</button>
       </div>
 
       {/* Category Buttons Row */}
@@ -65,8 +83,8 @@ const OurProducts = () => {
         {categories.map((category) => (
           <button
             key={category.id}
-            className={`category-button ${activeCategory === category.id ? 'active' : ''}`}
-            onClick={() => handleCategoryClick(category.id)}
+            className={`category-button ${activeCategory === category.name ? 'active' : ''}`}
+            onClick={() => handleCategoryClick(category.name)}
           >
             {category.name}
           </button>
@@ -76,11 +94,7 @@ const OurProducts = () => {
       {/* Products Display */}
       <div className="products-grid">
         {filteredProducts.map((product) => (
-          <div key={product.id} className="product-card">
-            <h3>{product.name}</h3>
-            <p>${product.price.toFixed(2)}</p>
-            {product.featured && <span className="featured-badge">Featured</span>}
-          </div>
+          <ProductCard key={product.id} product={product} /> 
         ))}
       </div>
     </div>

@@ -45,3 +45,21 @@
   background-color: #fa00ddf0;
   color: white;
 }
+
+.products-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;  /* Add space between products */
+  justify-content: space-around;  /* Evenly distribute the products */
+}
+
+.product-card {
+  flex: 1 1 calc(33% - 20px);  /* 3 items per row */
+  box-sizing: border-box;  /* Ensure padding/margins are accounted for */
+  max-width: 300px;  /* Max width for each product card */
+}
+
+
+
+
+

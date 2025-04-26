@@ -209,7 +209,6 @@ export const AppProvider = ({ children }) => {
   };
 
 
-
   // Helper functions
   const getTotalItems = () => cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const getTotalPrice = () => {
