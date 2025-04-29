@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { CartProvider } from './context/CartContext';  // Import the CartProvider from context
+import CartProvider from './context/CartContext'; // Correct import for cartcontext
 
 // Import components
 import Header from './components/Header';
@@ -10,11 +10,12 @@ import AccountPage from './pages/AccountPage';
 import AboutUs from './pages/AboutUs';
 import Cart from './pages/Cart';
 import OurProducts from './pages/OurProducts';
+import MyOrders from './pages/MyOrders';  
 import './App.css';
 
 const App = () => {
   return (
-    <CartProvider> {/* Wrap the app in CartProvider to give access to the cart context */}
+    <CartProvider>
       <Router>
         <div className="app-container">
           <Header />
@@ -26,15 +27,14 @@ const App = () => {
               <Route path="/about-us" element={<AboutUs />} />
               <Route path="/our-products" element={<OurProducts />} />
               <Route path="/cart" element={<Cart />} />
-
-              {/* Redirect for old links */}
+              <Route path="/my-orders" element={<MyOrders />} />  
               <Route path="/categories" element={<Navigate to="/our-products" replace />} />
             </Routes>
           </main>
           <Footer />
         </div>
       </Router>
-    </CartProvider>  
+    </CartProvider>
   );
 }
 

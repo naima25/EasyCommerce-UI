@@ -1,28 +1,62 @@
 import React from 'react';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../context/CartContext';  // Importing Cart Context
 
-const Cart = () => {
+const CartPage = () => {
   const { cartItems, updateQuantity, removeFromCart } = useCart();
 
-  if (cartItems.length === 0) return <h2>Your cart is empty 🛒</h2>;
+  const handleIncrease = (itemId) => {
+    updateQuantity(itemId, 1);  // Increase the quantity of the product by 1
+  };
+
+  const handleDecrease = (itemId) => {
+    updateQuantity(itemId, -1);  // Decrease the quantity of the product by 1
+  };
+
+  const handleRemove = (itemId) => {
+    removeFromCart(itemId);  // Remove item from the cart
+  };
 
   return (
-    <div>
-      <h2>Your Cart</h2>
-      {cartItems.map(item => (
-        <div key={item.id} style={{ marginBottom: '1rem' }}>
-          <h3>{item.name}</h3>
-          <p>Price: ${item.price.toFixed(2)}</p>
-          <div>
-            <button onClick={() => updateQuantity(item.id, -1)}>-</button>
-            <span style={{ margin: '0 10px' }}>{item.quantity}</span>
-            <button onClick={() => updateQuantity(item.id, 1)}>+</button>
-          </div>
-          <button onClick={() => removeFromCart(item.id)}>Remove</button>
+    <div className="cart-page">
+      <h1>Your Cart</h1>
+      {cartItems.length === 0 ? (
+        <p>Your cart is empty.</p>
+      ) : (
+        <div>
+          <ul className="cart-items-list">
+            {cartItems.map((item) => (
+              <li key={item.id} className="cart-item">
+                <div className="cart-item-details">
+                  {/* Product Image */}
+                  <img 
+                    src={item.product?.imageUrl ? `http://localhost:5172${item.product.imageUrl}` : '/default-image.jpg'} 
+                    alt={item.product?.name || 'Product Image'} 
+                    width="100" 
+                    className="cart-item-image"
+                  />
+                  {/* Product Name */}
+                  <span className="cart-item-name">{item.product?.name || 'Unknown Product'}</span>
+                  {/* Product Price */}
+                  <span className="cart-item-price">Price: ${item.product?.price.toFixed(2)}</span>
+                </div>
+                <div className="cart-item-quantity">
+                  {/* Decrease button */}
+                  <button onClick={() => handleDecrease(item.id)}>-</button>
+                  
+                  {/* Quantity Display */}
+                  <span className="cart-item-quantity-number">{item.quantity}</span>  {/* This should display the quantity */}
+                  
+                  {/* Increase button */}
+                  <button onClick={() => handleIncrease(item.id)}>+</button>
+                </div>
+                <button onClick={() => handleRemove(item.id)} className="remove-button">Remove</button>
+              </li>
+            ))}
+          </ul>
         </div>
-      ))}
+      )}
     </div>
   );
 };
 
-export default Cart;
+export default CartPage;

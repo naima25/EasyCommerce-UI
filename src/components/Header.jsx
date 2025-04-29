@@ -66,13 +66,14 @@ const Header = () => {
             Search
           </Link>
         </li>
+        {/* ✅ Update Wishlist to My Orders */}
         <li>
           <Link
-            to="/wishlist"
-            className={location.pathname === "/wishlist" ? "active" : ""}
+            to="/my-orders"  // Change here
+            className={location.pathname === "/my-orders" ? "active" : ""}  // Update path
             onClick={closeMenu}
           >
-            Wishlist
+            My Orders  {/* Change text here */}
           </Link>
         </li>
 
