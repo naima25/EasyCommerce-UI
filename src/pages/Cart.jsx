@@ -5,16 +5,20 @@ const CartPage = () => {
   const { cartItems, updateQuantity, removeFromCart } = useCart();
 
   const handleIncrease = (itemId) => {
-    updateQuantity(itemId, 1);  // Increase the quantity of the product by 1
+    console.log("Increase clicked for item:", itemId);
+    updateQuantity(itemId, 1);
   };
-
+  
   const handleDecrease = (itemId) => {
-    updateQuantity(itemId, -1);  // Decrease the quantity of the product by 1
+    console.log("Decrease clicked for item:", itemId);
+    updateQuantity(itemId, -1);
   };
-
+  
   const handleRemove = (itemId) => {
-    removeFromCart(itemId);  // Remove item from the cart
+    console.log("Remove clicked for item:", itemId);
+    removeFromCart(itemId);
   };
+  
 
   return (
     <div className="cart-page">

@@ -14,7 +14,7 @@ const CartProvider = ({ children }) => {
     let isMounted = true;
     axios.get('http://localhost:5172/api/cartitem')
       .then(({ data }) => {
-        // If there are no items, bail early
+      
         if (data.length === 0) {
           if (isMounted) {
             setCartItems([]);
@@ -99,16 +99,34 @@ const CartProvider = ({ children }) => {
   const updateQuantity = (itemId, delta) => {
     const target = cartItems.find(i => i.id === itemId);
     if (!target) return;
-    const newQty = Math.max(target.quantity + delta, 1);
-    axios.put(`http://localhost:5172/api/cartitem/${itemId}`, { quantity: newQty })
+
+    const newQty = Math.max(target.quantity + delta, 1); // Ensure the quantity doesn't go below 1
+
+    // Log the updated quantity and item details
+    console.log("Updating quantity for item ID:", itemId, "New Quantity:", newQty);
+
+    // Prepare the data to send in the PUT request
+    const updatedItem = {
+      id: target.id,
+      quantity: newQty,
+      orderId: target.orderId, // Ensure the orderId is sent
+      productId: target.productId, // Ensure the productId is sent
+      price: target.price, // Ensure the price is sent
+    };
+
+    // Make the PUT request to update the quantity in the backend
+    axios.put(`http://localhost:5172/api/cartitem/${itemId}`, updatedItem)
       .then(() => {
         setCartItems(items =>
           items.map(i =>
             i.id === itemId ? { ...i, quantity: newQty } : i
           )
         );
+        console.log("Quantity updated successfully for item:", itemId);
       })
-      .catch(console.error);
+      .catch((error) => {
+        console.error("Error updating cart item:", error.response ? error.response.data : error.message);
+      });
   };
 
   // Remove an item
