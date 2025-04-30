@@ -9,12 +9,11 @@ const CartProvider = ({ children }) => {
   const [cartLoading, setCartLoading] = useState(true);
   const [cartError, setCartError] = useState(null);
 
-  // Fetch cart items, then enrich each with its product data
+  // Fetch cart items
   useEffect(() => {
     let isMounted = true;
     axios.get('http://localhost:5172/api/cartitem')
       .then(({ data }) => {
-      
         if (data.length === 0) {
           if (isMounted) {
             setCartItems([]);
@@ -22,18 +21,17 @@ const CartProvider = ({ children }) => {
           }
           return;
         }
-        // For each cartItem, fetch its product details
         return Promise.all(
           data.map(item =>
-            axios.get(`http://localhost:5172/api/product/${item.ProductId}`)
-                 .then(({ data: prod }) => ({
-                   ...item,
-                   product: {
-                     name: prod.name,
-                     price: prod.price,  // Ensure price is passed correctly
-                     imageUrl: prod.imageUrl,
-                   }
-                 }))
+            axios.get(`http://localhost:5172/api/product/${item.productId}`)
+              .then(({ data: prod }) => ({
+                ...item,
+                product: {
+                  name: prod.name,
+                  price: prod.price,
+                  imageUrl: prod.imageUrl,
+                }
+              }))
           )
         );
       })
@@ -52,33 +50,33 @@ const CartProvider = ({ children }) => {
     return () => { isMounted = false; };
   }, []);
 
-  // Add a product to the cart (product passed in from your ProductCard)
+  // Add to Cart
   const addToCart = (product) => {
-    const existing = cartItems.find(item => item.ProductId === product.id);
+    const existing = cartItems.find(item => item.productId === product.id);
     if (existing) {
-      // Increase quantity
-      const newQty = existing.Quantity + product.quantity;
-      axios.put(`http://localhost:5172/api/cartitem/${existing.id}`, { Quantity: newQty })
-        .then(() => {
-          setCartItems(items =>
-            items.map(i =>
-              i.id === existing.id
-                ? { ...i, Quantity: newQty }
-                : i
-            )
-          );
-        })
-        .catch(console.error);
+      const newQty = existing.quantity + product.quantity;
+      axios.put(`http://localhost:5172/api/cartitem/${existing.id}`, {
+        quantity: newQty,
+        productId: existing.productId,
+        price: existing.price,
+      })
+      .then(() => {
+        setCartItems(items =>
+          items.map(i =>
+            i.id === existing.id
+              ? { ...i, quantity: newQty }
+              : i
+          )
+        );
+      })
+      .catch(console.error);
     } else {
-      // Add new
       axios.post('http://localhost:5172/api/cartitem', {
-        Quantity: product.quantity,
-        OrderId: 1,
-        ProductId: product.id,
-        Price: product.price, // Ensure price is included in the request
+        quantity: product.quantity,
+        productId: product.id,
+        price: product.price,
       })
       .then(({ data: newItem }) => {
-        // Enrich with product details immediately
         setCartItems(items => [
           ...items,
           {
@@ -95,26 +93,19 @@ const CartProvider = ({ children }) => {
     }
   };
 
-  // Change quantity by +/-1 (never below 1)
+  // Update Quantity
   const updateQuantity = (itemId, delta) => {
     const target = cartItems.find(i => i.id === itemId);
     if (!target) return;
 
-    const newQty = Math.max(target.quantity + delta, 1); // Ensure the quantity doesn't go below 1
-
-    // Log the updated quantity and item details
-    console.log("Updating quantity for item ID:", itemId, "New Quantity:", newQty);
-
-    // Prepare the data to send in the PUT request
+    const newQty = Math.max(target.quantity + delta, 1);
     const updatedItem = {
       id: target.id,
       quantity: newQty,
-      orderId: target.orderId, // Ensure the orderId is sent
-      productId: target.productId, // Ensure the productId is sent
-      price: target.price, // Ensure the price is sent
+      productId: target.productId,
+      price: target.price,
     };
 
-    // Make the PUT request to update the quantity in the backend
     axios.put(`http://localhost:5172/api/cartitem/${itemId}`, updatedItem)
       .then(() => {
         setCartItems(items =>
@@ -122,14 +113,13 @@ const CartProvider = ({ children }) => {
             i.id === itemId ? { ...i, quantity: newQty } : i
           )
         );
-        console.log("Quantity updated successfully for item:", itemId);
       })
       .catch((error) => {
         console.error("Error updating cart item:", error.response ? error.response.data : error.message);
       });
   };
 
-  // Remove an item
+  // Remove item from Cart
   const removeFromCart = (itemId) => {
     axios.delete(`http://localhost:5172/api/cartitem/${itemId}`)
       .then(() => {
