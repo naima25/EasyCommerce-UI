@@ -1,29 +1,42 @@
 import React from 'react';
 import { useCart } from '../context/CartContext';  // Importing Cart Context
 import { useNavigate } from 'react-router-dom';    // For navigation
+import axios from 'axios';
 
 const CartPage = () => {
-  const { cartItems, updateQuantity, removeFromCart } = useCart();
+  const { cartItems, updateQuantity, removeFromCart, createOrder } = useCart();
   const navigate = useNavigate();
 
   const handleIncrease = (itemId) => {
     console.log("Increase clicked for item:", itemId);
     updateQuantity(itemId, 1);
   };
-  
+
   const handleDecrease = (itemId) => {
     console.log("Decrease clicked for item:", itemId);
     updateQuantity(itemId, -1);
   };
-  
-  const handleRemove = (itemId) => {
+
+  const handleRemove = async (itemId) => {
     console.log("Remove clicked for item:", itemId);
-    removeFromCart(itemId);
+    try {
+      removeFromCart(itemId);
+      
+      // If the item is the last item in the cart, we remove the order from the backend
+      if (cartItems.length === 1) {
+        const orderId = cartItems[0].orderId;  // Assuming the orderId is here
+        await axios.delete(`http://localhost:5172/api/order/${orderId}`);
+        console.log("Order deleted from backend");
+        navigate('/');  // Navigate to homepage or relevant page
+      }
+    } catch (error) {
+      console.error("Failed to remove item and delete order from backend:", error);
+    }
   };
 
-  const handleCreateOrder = () => {
+  const handleCreateOrder = async () => {
     console.log("Create Order clicked");
-    // Later: Save the order logic goes here
+    createOrder();  // Create order via context method
     navigate('/my-orders'); // Navigate to My Orders page
   };
 
