@@ -1,3 +1,4 @@
+// src/pages/Cart.jsx
 import React from 'react';
 import { useCart } from '../context/CartContext';  // Importing Cart Context
 import { useNavigate } from 'react-router-dom';    // For navigation
@@ -8,26 +9,21 @@ const CartPage = () => {
   const navigate = useNavigate();
 
   const handleIncrease = (itemId) => {
-    console.log("Increase clicked for item:", itemId);
     updateQuantity(itemId, 1);
   };
 
   const handleDecrease = (itemId) => {
-    console.log("Decrease clicked for item:", itemId);
     updateQuantity(itemId, -1);
   };
 
   const handleRemove = async (itemId) => {
-    console.log("Remove clicked for item:", itemId);
     try {
       removeFromCart(itemId);
-      
-      // If the item is the last item in the cart, we remove the order from the backend
       if (cartItems.length === 1) {
-        const orderId = cartItems[0].orderId;  // Assuming the orderId is here
+        const orderId = cartItems[0].orderId;
         await axios.delete(`http://localhost:5172/api/order/${orderId}`);
         console.log("Order deleted from backend");
-        navigate('/');  // Navigate to homepage or relevant page
+        navigate('/');
       }
     } catch (error) {
       console.error("Failed to remove item and delete order from backend:", error);
@@ -35,9 +31,12 @@ const CartPage = () => {
   };
 
   const handleCreateOrder = async () => {
-    console.log("Create Order clicked");
-    createOrder();  // Create order via context method
-    navigate('/my-orders'); // Navigate to My Orders page
+    try {
+      await createOrder();  // Assumes `createOrder` is implemented in CartContext
+      navigate('/my-orders');
+    } catch (error) {
+      console.error("Failed to create order:", error);
+    }
   };
 
   return (
@@ -69,8 +68,6 @@ const CartPage = () => {
               </li>
             ))}
           </ul>
-
-          {/* Create Order Button */}
           <div className="create-order-container">
             <button onClick={handleCreateOrder} className="create-order-button">
               Create Order

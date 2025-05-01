@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useCart } from '../context/CartContext';
 import axios from 'axios';
 
 const MyOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch orders on component mount
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -20,7 +20,7 @@ const MyOrders = () => {
     fetchOrders();
   }, []);
 
-  // Handle deleting an order
+
   const handleDeleteOrder = async (orderId) => {
     try {
       await axios.delete(`http://localhost:5172/api/order/${orderId}`);
@@ -34,7 +34,6 @@ const MyOrders = () => {
   return (
     <div>
       <h1>My Orders</h1>
-
       {loading ? (
         <p>Loading orders...</p>
       ) : orders.length === 0 ? (
