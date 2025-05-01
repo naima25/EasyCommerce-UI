@@ -1,21 +1,27 @@
+/* Container that holds the product list */
+.admin-products-container {
+  padding-bottom: 80px; /* This creates space at the bottom for the footer */
+  margin-bottom: 80px; /* Prevent content from going under the fixed footer */
+}
+
 /* Base footer styling */
 .footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: #ffffff42; 
-    color: white;
-    text-align: center;
-    padding: 20px;
-    font-size: 14px;
-  }
-  
-  /* Styling for the copyright text */
-  .footer p {
-    margin: 0;
-    line-height: 40px;
-    font-size: 0.7em;
-    color: #000000;
-  }
-  
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #ffffff42; 
+  color: white;
+  text-align: center;
+  padding: 20px;
+  font-size: 14px;
+  z-index: 100; /* Ensure it stays on top of other content */
+}
+
+/* Styling for the copyright text */
+.footer p {
+  margin: 0;
+  line-height: 40px;
+  font-size: 0.7em;
+  color: #000000;
+}

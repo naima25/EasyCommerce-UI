@@ -1,0 +1,140 @@
+/* Reset and base styling */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Calibri, sans-serif;
+}
+
+/* AdminProductsPage CSS */
+.admin-products-container {
+  padding: 2rem;
+  margin-top: 70px; /* Adjust this to avoid clash with the fixed navbar */
+}
+
+h2 {
+  text-align: left;  /* Aligns "Products" to the left */
+  font-size: 1.25rem;  /* Slightly smaller font size */
+  font-weight: 600;
+  margin-bottom: 0.5rem;  /* Adjust margin to place it lower */
+}
+
+.admin-controls {
+  display: flex;
+  justify-content: flex-end;  /* Move the button to the right side */
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.add-button {
+  background: #4CAF50;
+  color: white;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 500;
+  margin-left: auto; /* Aligns the button to the right */
+}
+
+.products-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  table-layout: fixed;  /* Ensures the table has a fixed layout */
+}
+
+.products-table th, 
+.products-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.products-table th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+}
+
+.admin-product-thumbnail {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.edit-button {
+  background: #2196F3;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  text-decoration: none;
+  border-radius: 3px;
+  font-size: 0.875rem;
+}
+
+.delete-button {
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+/* Pagination Styling */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.pagination button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  background-color: #f5f5f5;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.pagination button:hover {
+  background-color: #e0e0e0;
+}
+
+/* Disabled button */
+.pagination button.disabled {
+  background-color: #ddd;
+  cursor: not-allowed;
+}
+
+/* Pagination button active style */
+.pagination button.active {
+  background-color: #fa00ddf0;
+  color: white;
+}
+
+/* Base footer styling */
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #ffffff42;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  font-size: 14px;
+}
+
+.footer p {
+  margin: 0;
+  line-height: 40px;
+  font-size: 0.7em;
+  color: #000000;
+}

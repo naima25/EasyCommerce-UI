@@ -91,6 +91,16 @@ const Header = () => {
           </Link>
         </li>
 
+        <li>
+      <Link
+        to="/admin/products"  
+        className={location.pathname.startsWith("/admin") ? "active" : ""}
+        onClick={closeMenu}
+      >
+        Dashboard
+      </Link>
+    </li>
+
         {isAuthenticated ? (
           <>
             <li>

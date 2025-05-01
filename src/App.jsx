@@ -11,6 +11,10 @@ import AboutUs from './pages/AboutUs';
 import Cart from './pages/Cart';
 import OurProducts from './pages/OurProducts';
 import MyOrders from './pages/MyOrders';  
+import AdminProductsPage from './pages/AdminProductsPage';  
+import AdminCategoriesPage from './pages/AdminCategoriesPage';  
+import AdminProductForm from './components/AdminProductForm'; // Corrected import for AdminProductForm
+
 import './App.css';
 
 const App = () => {
@@ -29,6 +33,15 @@ const App = () => {
               <Route path="/cart" element={<Cart />} />
               <Route path="/my-orders" element={<MyOrders />} />  
               <Route path="/categories" element={<Navigate to="/our-products" replace />} />
+              <Route path="/admin/products" element={<AdminProductsPage />} />
+              <Route path="/admin/categories" element={<AdminCategoriesPage />} />
+              <Route path="/admin/products/new" element={<AdminProductForm />} />  {/* Route to Add New Product */}
+              <Route path="/admin/products/edit/:id" element={<AdminProductForm />} />  {/* Route to Edit Product */}
+              <Route path="/admin" element={<Navigate to="/admin/products" replace />} />
+              <Route path="/admin/products/new" element={<AdminProductForm />} />
+              <Route path="/admin/products/new" element={<AdminProductForm />} />
+              <Route path="/admin/products/edit/:id" element={<AdminProductForm />} />
+
             </Routes>
           </main>
           <Footer />
