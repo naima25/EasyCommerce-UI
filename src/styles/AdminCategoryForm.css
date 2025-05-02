@@ -1,0 +1,79 @@
+/* Reset and base styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Calibri, sans-serif;
+  }
+  
+  /* AdminCategoryForm CSS */
+  .admin-category-form-container {
+    padding: 2rem;
+    margin-top: 70px; /* Adjust this to avoid clash with the fixed navbar */
+  }
+  
+  h2 {
+    text-align: left;  /* Aligns the title to the left */
+    font-size: 1.25rem;  /* Slightly smaller font size */
+    font-weight: 600;
+    margin-bottom: 0.5rem;  /* Adjust margin to place it lower */
+  }
+  
+  /* Navigation Buttons Styling */
+  .navigation-buttons {
+    display: flex;
+    justify-content: space-between;  /* Space out the buttons */
+    margin-top: 1.5rem;
+  }
+  
+  /* Back buttons styling */
+  .back-to-categories-button,
+  .back-to-products-button {
+    background: #4CAF50; /* Matches the green color from the AdminProductsPage */
+    color: white;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;  /* Smooth hover effect */
+  }
+  
+  /* Hover effects */
+  .back-to-categories-button:hover,
+  .back-to-products-button:hover {
+    background-color: #45a049;  /* Slightly darker green when hovering */
+  }
+  
+  /* Focus effect for accessibility */
+  .back-to-categories-button:focus,
+  .back-to-products-button:focus {
+    outline: 2px solid #ffcc00; /* Yellow border on focus */
+  }
+  
+  /* Active button style when clicked */
+  .back-to-categories-button:active,
+  .back-to-products-button:active {
+    background-color: #388e3c;  /* Darker green when clicked */
+    transform: scale(0.98); /* Shrinks the button slightly */
+  }
+  
+  /* Base footer styling */
+  .footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ffffff42;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-size: 14px;
+  }
+  
+  .footer p {
+    margin: 0;
+    line-height: 40px;
+    font-size: 0.7em;
+    color: #000000;
+  }
+  

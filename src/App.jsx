@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';  // Corrected import for CartProvider
 
-// Import components
+// Import components for general pages
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -11,9 +11,12 @@ import AboutUs from './pages/AboutUs';
 import Cart from './pages/Cart';
 import OurProducts from './pages/OurProducts';
 import MyOrders from './pages/MyOrders';  
+
+// Import components for admin pages
 import AdminProductsPage from './pages/AdminProductsPage';  
 import AdminCategoriesPage from './pages/AdminCategoriesPage';  
 import AdminProductForm from './components/AdminProductForm'; // Corrected import for AdminProductForm
+import AdminCategoryForm from './components/AdminCategoryForm'; // Import AdminCategoryForm for category creation/edit
 
 import './App.css';
 
@@ -25,6 +28,7 @@ const App = () => {
           <Header />
           <main className="main-content">
             <Routes>
+              {/* Public Routes */}
               <Route path="/" element={<Home />} />
               <Route path="/home" element={<Home />} />
               <Route path="/account" element={<AccountPage />} />
@@ -32,15 +36,32 @@ const App = () => {
               <Route path="/our-products" element={<OurProducts />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/my-orders" element={<MyOrders />} />  
+              {/* A route for categories that redirects to the 'Our Products' page */}
               <Route path="/categories" element={<Navigate to="/our-products" replace />} />
-              <Route path="/admin/products" element={<AdminProductsPage />} />
-              <Route path="/admin/categories" element={<AdminCategoriesPage />} />
-              <Route path="/admin/products/new" element={<AdminProductForm />} />  {/* Route to Add New Product */}
-              <Route path="/admin/products/edit/:id" element={<AdminProductForm />} />  {/* Route to Edit Product */}
+
+              {/* Admin Routes */}
+              {/* Redirect to /admin/products by default when accessing /admin */}
               <Route path="/admin" element={<Navigate to="/admin/products" replace />} />
+              
+              {/* Routes for Admin Products */}
+              {/* Admin Products page: List all products */}
+              <Route path="/admin/products" element={<AdminProductsPage />} />
+              
+              {/* Add New Product */}
               <Route path="/admin/products/new" element={<AdminProductForm />} />
-              <Route path="/admin/products/new" element={<AdminProductForm />} />
+              
+              {/* Edit Product: Use product ID in URL */}
               <Route path="/admin/products/edit/:id" element={<AdminProductForm />} />
+
+              {/* Routes for Admin Categories */}
+              {/* Admin Categories page: List all categories */}
+              <Route path="/admin/categories" element={<AdminCategoriesPage />} />
+              
+              {/* Add New Category */}
+              <Route path="/admin/categories/new" element={<AdminCategoryForm />} />
+              
+              {/* Edit Category: Use category ID in URL */}
+              <Route path="/admin/categories/edit/:id" element={<AdminCategoryForm />} />
 
             </Routes>
           </main>

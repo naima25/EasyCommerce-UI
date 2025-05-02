@@ -8,8 +8,6 @@ const AdminProductsPage = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [productsPerPage] = useState(5); // Adjust this number to how many products you want to show per page
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,7 +17,6 @@ const AdminProductsPage = () => {
           axios.get('http://localhost:5172/api/category')
         ]);
 
-        // Map category names from the response directly
         const productsWithCategories = productsRes.data.map(product => ({
           ...product,
           categoryName: product.categoryNames?.join(', ') || 'Uncategorized'
@@ -48,18 +45,6 @@ const AdminProductsPage = () => {
     }
   };
 
-  // Pagination logic
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
-
-  const totalPages = Math.ceil(products.length / productsPerPage);
-
-  const handlePagination = (pageNumber) => {
-    if (pageNumber < 1 || pageNumber > totalPages) return; // Prevent invalid page numbers
-    setCurrentPage(pageNumber);
-  };
-
   if (loading) return <div>Loading products...</div>;
   if (error) return <div>Error: {error}</div>;
 
@@ -68,6 +53,9 @@ const AdminProductsPage = () => {
       <h2>Products</h2>
 
       <div className="admin-controls">
+        <Link to="/admin/categories" className="categories-link">
+          Manage Categories
+        </Link>
         <Link to="/admin/products/new" className="add-button">
           + Add New Product
         </Link>
@@ -81,11 +69,12 @@ const AdminProductsPage = () => {
             <th>Name</th>
             <th>Brand</th>
             <th>Category</th>
+            <th>Price</th> {/* New column */}
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {currentProducts.map(product => (
+          {products.map(product => (
             <tr key={product.id}>
               <td>{product.id}</td>
               <td>
@@ -98,6 +87,7 @@ const AdminProductsPage = () => {
               <td>{product.name}</td>
               <td>EasyCommerce</td>
               <td>{product.categoryName}</td>
+              <td>${product.price?.toFixed(2)}</td> {/* New price cell */}
               <td className="action-buttons">
                 <Link 
                   to={`/admin/products/edit/${product.id}`} 
@@ -116,31 +106,6 @@ const AdminProductsPage = () => {
           ))}
         </tbody>
       </table>
-
-      {/* Pagination */}
-      <div className="pagination">
-        <button 
-          onClick={() => handlePagination(currentPage - 1)} 
-          disabled={currentPage === 1}
-        >
-          Previous
-        </button>
-        {[...Array(totalPages)].map((_, index) => (
-          <button 
-            key={index} 
-            onClick={() => handlePagination(index + 1)} 
-            className={currentPage === index + 1 ? 'active' : ''}
-          >
-            {index + 1}
-          </button>
-        ))}
-        <button 
-          onClick={() => handlePagination(currentPage + 1)} 
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </button>
-      </div>
     </div>
   );
 };

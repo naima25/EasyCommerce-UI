@@ -4,20 +4,20 @@ import { useParams, useNavigate } from 'react-router-dom';
 import '../styles/AdminProductForm.css'; 
 
 const AdminProductForm = () => {
-  const { id } = useParams();  // Grab product ID for editing (if any)
+  const { id } = useParams();
   const navigate = useNavigate();
-  
+
   const [product, setProduct] = useState({
     name: '',
     price: '',
     category: '',
     imageUrl: '',
   });
+
   const [categories, setCategories] = useState([]);
-  const [isEditing, setIsEditing] = useState(false); // Check if we're editing an existing product
-  
+  const [isEditing, setIsEditing] = useState(false);
+
   useEffect(() => {
-    // Fetch categories for the dropdown
     const fetchCategories = async () => {
       try {
         const response = await axios.get('http://localhost:5172/api/category');
@@ -26,15 +26,16 @@ const AdminProductForm = () => {
         console.error('Failed to fetch categories:', error);
       }
     };
-    
-    // If we have an ID in the URL, we are editing a product
+
     if (id) {
       setIsEditing(true);
-      // Fetch the product data for editing
       const fetchProduct = async () => {
         try {
           const response = await axios.get(`http://localhost:5172/api/product/${id}`);
-          setProduct(response.data);
+          setProduct({
+            ...response.data,
+            category: response.data.categoryIds?.[0] || '', // Assume first category ID if multiple
+          });
         } catch (error) {
           console.error('Failed to fetch product:', error);
         }
@@ -57,14 +58,23 @@ const AdminProductForm = () => {
 
     try {
       if (isEditing) {
-        // Update the product if editing
         await axios.put(`http://localhost:5172/api/product/${id}`, product);
         alert('Product updated!');
       } else {
-        // Create a new product if adding
-        await axios.post('http://localhost:5172/api/product', product);
+        const createRes = await axios.post('http://localhost:5172/api/product', product);
+        const newProductId = createRes.data.id;
+
+        // Assign category
+        if (product.category) {
+          await axios.post('http://localhost:5172/api/productcategory', {
+            productid: newProductId,
+            categoryid: parseInt(product.category),
+          });
+        }
+
         alert('Product added!');
       }
+
       navigate('/admin/products');
     } catch (error) {
       console.error('Error submitting form:', error);
@@ -105,7 +115,7 @@ const AdminProductForm = () => {
           >
             <option value="">Select a Category</option>
             {categories.map((category) => (
-              <option key={category.id} value={category.name}>
+              <option key={category.id} value={category.id}>
                 {category.name}
               </option>
             ))}
