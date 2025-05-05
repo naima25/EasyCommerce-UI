@@ -2,21 +2,9 @@ import React, { useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
 
 const CartPage = () => {
-  const { cartItems, loading, error, addToCart, removeFromCart, updateCartItemQuantity } = useAppContext();
-  console.log('Cart Items:', cartItems);
+  const { cart, loading, error, addToCart, removeFromCart, updateCartItemQuantity } = useAppContext();
+  console.log('Cart Items:', cart);
   // const cart  = cartItems[0];
-
-  // useEffect(() => {
-  //   if (!cart) { // Only fetch if there's no cart data
-  //     fetchCart(); // Refresh cart when component mounts
-  //   }
-  // }, [cart, fetchCart]); // Only run once when cart is not loaded
-
-  // useEffect(() => {
-  //   if (cart) {
-  //     console.log('Cart loaded:', cart);
-  //   }
-  // }, [cart]);
 
   if (loading) return <div>Loading your cart...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -37,9 +25,9 @@ const CartPage = () => {
       <h1>Your Cart</h1>
       <br />
 
-      {cartItems[0].cartItems.length > 0 ? (
+      {cart?.cartItems?.length > 0 ? (
         <div>
-          {cartItems[0].cartItems.map((item, index) => (
+          {cart.cartItems.map((item, index) => (
             <div key={`${item.productId}-${index}`}>
               <img
                 src={item.product?.imageUrl || 'placeholder-image-url'}
@@ -58,7 +46,7 @@ const CartPage = () => {
               <hr />
             </div>
           ))}
-          <h3>Total: ${cartItems[0].cartItems?.price?.toFixed(2) || '0.00'}</h3>
+          <h3>Total: ${cart?.price?.toFixed(2) || '0.00'}</h3>
         </div>
       ) : (
         <p>Your cart is empty.</p>

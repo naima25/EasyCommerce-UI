@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext'; // 🛒 Import the cart context
+import { useAppContext } from '../context/AppContext';
 import '../styles/productcard.css';
 
 
 const ProductCard = ({ product }) => {
-  const { addToCart, updateQuantity } = useCart(); // 🛒 Get addToCart from context
+  const { addToCart } = useAppContext(); // 🛒 Get addToCart from context
   const { name, price, imageUrl, id } = product;
-
+  
   const [quantity, setQuantity] = useState(1); 
 
   const handleAddToCart = () => {
@@ -25,7 +26,7 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <div className="product-card">
+    <div className="product-card" key={id}>
       <img 
         src={imageUrl?.startsWith('http') ? imageUrl : `http://localhost:5172${imageUrl}`} 
         alt={name} 

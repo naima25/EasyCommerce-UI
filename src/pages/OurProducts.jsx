@@ -1,62 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ProductCard from '../components/ProductCard';  
+import { useAppContext } from '../context/AppContext';
 import '../styles/OurProducts.css';  
 
 const OurProducts = () => {
-  const [categories, setCategories] = useState([]); // State for categories
-  const [products, setProducts] = useState([]); // State for all products
-  const [filteredProducts, setFilteredProducts] = useState([]); // State for filtered products
-  const [loading, setLoading] = useState({
-    categories: true,
-    products: true,
-  });
-  const [error, setError] = useState(null); // State for error handling
+  const {categories, products, filteredProducts, setFilteredProducts, loading, error, getProductsByCategory} = useAppContext(); 
   const [activeCategory, setActiveCategory] = useState(null); // State for active category
-
-    // Function to shuffle products randomly
+  
+  // Function to shuffle products randomly
     const shuffleArray = (array) => {
       return array.sort(() => Math.random() - 0.5); // Shuffle using random number generator
     };
 
-  // Fetch categories and products on component mount
+  // useEffect to fetch products when the component mounts
   useEffect(() => {
-    // Fetch categories
-    axios.get('http://localhost:5172/api/category')
-      .then((response) => {
-        setCategories(response.data);
-        setLoading(prev => ({ ...prev, categories: false }));
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(prev => ({ ...prev, categories: false }));
-      });
+    // Set the filtered products to the shuffled array
+    setFilteredProducts(products);
+  }, [loading]);
 
-    // Fetch all products initially
-    axios.get('http://localhost:5172/api/product')
-      .then((response) => {
-        setProducts(response.data);
-        setFilteredProducts(response.data); // Initially, display all products
-        setLoading(prev => ({ ...prev, products: false }));
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(prev => ({ ...prev, products: false }));
-      });
-  }, []);
 
   const handleCategoryClick = (categoryName) => {
     setActiveCategory(categoryName);
   
     // Fetch products based on the encoded category name
     if (categoryName) {
-      axios.get(`http://localhost:5172/api/Product/byCategory?categoryName=${encodeURIComponent(categoryName)}`)
-        .then((response) => {
-          setFilteredProducts(response.data); // Set filtered products based on category
-        })
-        .catch((err) => {
-          setError(err.message);
-        });
+      getProductsByCategory(categoryName)
     }
   };
   
@@ -68,7 +37,8 @@ const OurProducts = () => {
   };
 
   // Render loading or error messages if needed
-  if (loading.categories || loading.products) return <div>Loading...</div>;
+  // if (loading.categories || loading.products) return <div>Loading...</div>;
+  if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (

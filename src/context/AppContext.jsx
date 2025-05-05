@@ -12,8 +12,9 @@ export const AppProvider = ({ children }) => {
 
   // App data state
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [cartItems, setCartItems] = useState([]);
+  const [cart, setCart] = useState([]);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -28,28 +29,35 @@ export const AppProvider = ({ children }) => {
         // Fetch products
         const productsResponse = await api.get('/product');
         setProducts(productsResponse.data);
-        console.log("after fetching products: ")
-        // Extract unique categories
-        // const allCategories = productsResponse.data.flatMap(p => p.notes.map(n => n.note));
-        // setCategories([...new Set(allCategories)]);
+        console.log("after fetching products: ", productsResponse)
+        // Get categories
+        const categoriesResponse = await api.get('/category');
+        setCategories(categoriesResponse.data);
+
         console.log(productsResponse);
         console.log("before: ");
         console.log("token: ", token)
         // Fetch user data if authenticated
         if (token) {
           const decodedToken = jwtDecode(token);
+          console.log("decodedToken: ", decodedToken);
           setUserRole(decodedToken.role);
 
           const userId = decodedToken.userId;
+          console.log("userId: ", userId);
           setUserId(userId);
 
-          console.log(userId); // confirm userId is fine
+          console.log("myuserid: ",userId); // confirm userId is fine
 
-          const fetchCartItems = api.get(`/cart`)
-            .then(res => setCartItems(res.data))
+          const fetchCart = api.get(`/cart?customerId=${userId}`)
+            .then(res => {
+              console.log("cart response: ", res)
+              console.log("cart: ", res.data)
+              setCart(res.data ? res.data[0] : null)
+            })
             .catch(err => {
               if (err.response?.status === 404) {
-                setCartItems([]); // No cart items found
+                setCart([]); // No cart items found
               } else {
                 console.error('Failed to fetch cart items:', err);
               }
@@ -65,7 +73,7 @@ export const AppProvider = ({ children }) => {
               }
             });
 
-          await Promise.all([fetchCartItems, fetchOrders]);
+          await Promise.all([fetchCart, fetchOrders]);
         }
 
       } catch (err) {
@@ -78,7 +86,7 @@ export const AppProvider = ({ children }) => {
     fetchData();
     console.log("after fetching data: ")
     console.log(products);
-    console.log(cartItems)
+    console.log(cart)
     console.log(orders)
   }, [token]);
 
@@ -110,40 +118,107 @@ export const AppProvider = ({ children }) => {
     setToken(null);
     setUserRole(null);
     setUserId(null);
-    setCartItems([]);
+    setCart([]);
   };
-
-  // Cart functions
-  const addToCart = async (productsizeId, quantity = 1) => {
+  // products functions
+  const getProductsByCategory = async (categoryName) => {
     try {
-      const { data } = await api.post('/cartitems', {
-        userId,
-        productsizeId,
-        quantity
+      const response = await api.get(`/product/byCategory?categoryName=${encodeURIComponent(categoryName)}`);
+      setFilteredProducts(response.data);
+    } catch (error) {
+      setError(error.message);
+    }
+  }
+  
+
+  const addToCart = async (product) => {
+    try {
+      setLoading(true);
+      // await fetchCart();
+      // check if cart exists 
+      console.log("cart: ", cart)
+      const customerId = userId;
+      console.log("customerId: ", customerId)
+      const updatedItemsMap = new Map();
+
+      // Step 1: Add existing items to the map
+      cart?.cartItems?.forEach(item => {
+        updatedItemsMap.set(item.productId, {
+          productId: item.productId,
+          quantity: item.quantity
+        });
       });
+      
+      // Step 2: Update or insert the new product
+      if (updatedItemsMap.has(product.id)) {
+        const existing = updatedItemsMap.get(product.id);
+        updatedItemsMap.set(product.id, {
+          productId: product.id,
+          quantity: existing.quantity + product.quantity
+        });
+      } else {
+        updatedItemsMap.set(product.id, {
+          productId: product.id,
+          quantity: product.quantity
+        });
+      }
+      
+      // Step 3: Build the request
+      const requestBody = {
+        customerId,
+        cartItems: Array.from(updatedItemsMap.values()),
+        price: (cart?.price || 0) + (product.price * product.quantity)
+      };
+      
+      if(cart){
+        requestBody.id = cart.id;
+        requestBody.customer = cart.customer; 
+      }
+      let response = null
+      console.log("requestBody: ", requestBody)
+      // if cart exists, update it. if cart doesn't exists, create it
+      if (cart) {
+        response = await api.put(`/cart/${cart.id}`, requestBody);
+        console.log("updated cart")
+      } else {
+        response = await api.post('/cart', JSON.stringify(requestBody));
+      }
+      console.log("response: ", response)
 
-      setCartItems(prev => {
-        const existing = prev.find(item =>
-          item.productsizeId === data.productsizeId &&
-          item.userId === userId
-        );
-
-        return existing
-          ? prev.map(item => item.id === existing.id ? data : item)
-          : [...prev, data];
-      });
-
-      return data;
+      // if resopnse is not 200 OK, throw an error 
+      if (response?.status !== 204 && response?.status !== 201) {
+        throw new Error('Failed to add to cart');
+      }
+      await fetchCart(cart.id,customerId);
     } catch (err) {
-      throw err;
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
+
+    // Fetch cart from API
+    const fetchCart = async (cartId, customerId) => {
+      try {
+        setLoading(true);
+        const response = await fetch(`http://localhost:5172/api/cart/${cartId}?customerId=${customerId}`);
+        if (!response.ok) throw new Error('Failed to fetch cart');
+        const data = await response.json();
+        console.log("data: ", data)
+        setCart(data); // Get the most recent cart
+        // check if cart is unique, if there is no cart returned 
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
 
   const removeFromCart = async (cartItemId) => {
     try {
-      await api.delete(`/cartitems/${cartItemId}`);
-      setCartItems(prev => prev.filter(item => item.id !== cartItemId));
+      await api.delete(`/cart/${cartItemId}`);
+      setCart(prev => prev.filter(item => item.id !== cartItemId));
     } catch (err) {
       throw err;
     }
@@ -152,7 +227,7 @@ export const AppProvider = ({ children }) => {
   const updateCartItemQuantity = async (cartItemId, newQuantity) => {
     try {
       // Find the cart item with the matching cartItemId
-      const cartItem = cartItems.find(item => item.id === cartItemId);
+      const cartItem = cart.find(item => item.id === cartItemId);
 
       // If the cartItem doesn't exist, throw an error
       if (!cartItem) {
@@ -166,12 +241,12 @@ export const AppProvider = ({ children }) => {
       };
 
       // Send the PUT request with the updated cart item
-      const response = await api.put(`/cartitems/${cartItemId}`, updatedCartItem);
+      const response = await api.put(`/cart/${cartItemId}`, updatedCartItem);
 
       // Check if the server responded with a success (204 No Content)
       if (response.status === 204) {
         // Update the cart items state (since no data is returned, use the updated cartItem)
-        setCartItems(prev =>
+        setCart(prev =>
           prev.map(item => item.id === cartItemId ? updatedCartItem : item)
         );
       } else {
@@ -186,9 +261,9 @@ export const AppProvider = ({ children }) => {
 
 
   // Helper functions
-  const getTotalItems = () => cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const getTotalItems = () => cart.reduce((sum, item) => sum + item.quantity, 0);
   const getTotalPrice = () => {
-    return cartItems.reduce((sum, item) => {
+    return cart.reduce((sum, item) => {
       // Find the product based on productsizeId
       const product = products.find(p => p.sizes.some(size => size.id === item.productsizeId));
 
@@ -218,8 +293,8 @@ export const AppProvider = ({ children }) => {
       size
     };
   };
-  const getCartItem = (productId) => cartItems.find(item => item.productId === productId);
-  const getCartItemById = (id) => cartItems.find(item => item.id === id);
+  const getCartItem = (productId) => cart.find(item => item.productId === productId);
+  const getCartItemById = (id) => cart.find(item => item.id === id);
 
   const value = {
     // Auth
@@ -232,12 +307,15 @@ export const AppProvider = ({ children }) => {
 
     // Data
     products,
+    filteredProducts,
+    setFilteredProducts,
     categories,
-    cartItems,
+    cart,
     loading,
     error,
 
     // Actions
+    getProductsByCategory,
     addToCart,
     removeFromCart,
     updateCartItemQuantity,
