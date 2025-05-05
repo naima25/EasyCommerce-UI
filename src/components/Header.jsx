@@ -3,12 +3,12 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../styles/Header.css";
 import { useAppContext } from "../context/AppContext"; 
 import { useCart } from "../context/CartContext"; 
-import { FaShoppingCart } from "react-icons/fa"; // ✅ cart icon
+import { FaShoppingCart } from "react-icons/fa";
 
 const Header = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const { isAuthenticated, logout, getTotalItems } = useAppContext();
-  const { cartItems } = useCart(); // ✅ get cartItems
+  const { cart } = useCart(); // Now we get the whole cart object
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -25,7 +25,8 @@ const Header = () => {
     navigate("/home");
   };
 
-  const totalCartQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  // Updated to handle the new cart structure
+  const totalCartQuantity = cart?.cartItems?.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
   return (
     <nav>
@@ -66,18 +67,16 @@ const Header = () => {
             Search
           </Link>
         </li>
-        {/* ✅ Update Wishlist to My Orders */}
         <li>
           <Link
-            to="/my-orders"  // Change here
-            className={location.pathname === "/my-orders" ? "active" : ""}  // Update path
+            to="/my-orders"
+            className={location.pathname === "/my-orders" ? "active" : ""}
             onClick={closeMenu}
           >
-            My Orders  {/* Change text here */}
+            My Orders
           </Link>
         </li>
 
-        {/* ✅ Cart link updated nicely */}
         <li className="nav-cart-item">
           <Link
             to="/cart"
@@ -92,14 +91,14 @@ const Header = () => {
         </li>
 
         <li>
-      <Link
-        to="/admin/products"  
-        className={location.pathname.startsWith("/admin") ? "active" : ""}
-        onClick={closeMenu}
-      >
-        Dashboard
-      </Link>
-    </li>
+          <Link
+            to="/admin/products"  
+            className={location.pathname.startsWith("/admin") ? "active" : ""}
+            onClick={closeMenu}
+          >
+            Dashboard
+          </Link>
+        </li>
 
         {isAuthenticated ? (
           <>
