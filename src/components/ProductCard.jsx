@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useCart } from '../context/CartContext'; // 🛒 Import the cart context
 import '../styles/productcard.css';
 
+
 const ProductCard = ({ product }) => {
   const { addToCart, updateQuantity } = useCart(); // 🛒 Get addToCart from context
   const { name, price, imageUrl, id } = product;

@@ -11,10 +11,10 @@ export const AppProvider = ({ children }) => {
   const [userId, setUserId] = useState(null);
 
   // App data state
-  const [perfumes, setPerfumes] = useState([]);
-  const [perfumeNotes, setPerfumeNotes] = useState([]);
-  const [favorites, setFavorites] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [cartItems, setCartItems] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -24,15 +24,17 @@ export const AppProvider = ({ children }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-
-        // Fetch perfumes
-        const perfumesResponse = await api.get('/perfumes');
-        setPerfumes(perfumesResponse.data);
-
-        // Extract unique notes
-        const allNotes = perfumesResponse.data.flatMap(p => p.notes.map(n => n.note));
-        setPerfumeNotes([...new Set(allNotes)]);
-
+        console.log("before fetching products: ")
+        // Fetch products
+        const productsResponse = await api.get('/product');
+        setProducts(productsResponse.data);
+        console.log("after fetching products: ")
+        // Extract unique categories
+        // const allCategories = productsResponse.data.flatMap(p => p.notes.map(n => n.note));
+        // setCategories([...new Set(allCategories)]);
+        console.log(productsResponse);
+        console.log("before: ");
+        console.log("token: ", token)
         // Fetch user data if authenticated
         if (token) {
           const decodedToken = jwtDecode(token);
@@ -43,18 +45,7 @@ export const AppProvider = ({ children }) => {
 
           console.log(userId); // confirm userId is fine
 
-          // Handle favorites and cart gracefully
-          const fetchFavorites = api.get(`/favourites/user/${userId}`)
-            .then(res => setFavorites(res.data))
-            .catch(err => {
-              if (err.response?.status === 404) {
-                setFavorites([]); // No favorites found
-              } else {
-                console.error('Failed to fetch favorites:', err);
-              }
-            });
-
-          const fetchCartItems = api.get(`/cartitems/user/${userId}`)
+          const fetchCartItems = api.get(`/cart`)
             .then(res => setCartItems(res.data))
             .catch(err => {
               if (err.response?.status === 404) {
@@ -64,7 +55,17 @@ export const AppProvider = ({ children }) => {
               }
             });
 
-          await Promise.all([fetchFavorites, fetchCartItems]);
+          const fetchOrders = api.get(`/order`)
+            .then(res => setOrders(res.data))
+            .catch(err => {
+              if (err.response?.status === 404) {
+                setOrders([]); // No orders found
+              } else {
+                console.error('Failed to fetch orders:', err);
+              }
+            });
+
+          await Promise.all([fetchCartItems, fetchOrders]);
         }
 
       } catch (err) {
@@ -74,8 +75,11 @@ export const AppProvider = ({ children }) => {
         setLoading(false);
       }
     };
-
     fetchData();
+    console.log("after fetching data: ")
+    console.log(products);
+    console.log(cartItems)
+    console.log(orders)
   }, [token]);
 
   // Auth functions
@@ -106,48 +110,21 @@ export const AppProvider = ({ children }) => {
     setToken(null);
     setUserRole(null);
     setUserId(null);
-    setFavorites([]);
     setCartItems([]);
   };
 
-  // Favorites functions
-  const toggleFavorite = async (perfumeId) => {
-    if (!isAuthenticated) {
-      console.warn('User must be logged in to favorite.');
-      return;
-    }
-
-    try {
-      const existingFavorite = favorites.find(
-        (f) => f.perfumeId === perfumeId && f.userId === userId
-      );
-
-      if (existingFavorite) {
-        await api.delete(`/favourites/${existingFavorite.id}`);
-        setFavorites((prev) => prev.filter((f) => f.id !== existingFavorite.id));
-      } else {
-        const response = await api.post('/favourites', { userId, perfumeId });
-        const newFavorite = response.data;
-        setFavorites((prev) => [...prev, newFavorite]);
-      }
-    } catch (error) {
-      console.error('Failed to toggle favorite:', error);
-    }
-  };
-
-
   // Cart functions
-  const addToCart = async (perfumeSizeId, quantity = 1) => {
+  const addToCart = async (productsizeId, quantity = 1) => {
     try {
       const { data } = await api.post('/cartitems', {
         userId,
-        perfumeSizeId,
+        productsizeId,
         quantity
       });
 
       setCartItems(prev => {
         const existing = prev.find(item =>
-          item.perfumeSizeId === data.perfumeSizeId &&
+          item.productsizeId === data.productsizeId &&
           item.userId === userId
         );
 
@@ -161,7 +138,6 @@ export const AppProvider = ({ children }) => {
       throw err;
     }
   };
-
 
 
   const removeFromCart = async (cartItemId) => {
@@ -213,37 +189,36 @@ export const AppProvider = ({ children }) => {
   const getTotalItems = () => cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const getTotalPrice = () => {
     return cartItems.reduce((sum, item) => {
-      // Find the perfume based on perfumeSizeId
-      const perfume = perfumes.find(p => p.sizes.some(size => size.id === item.perfumeSizeId));
+      // Find the product based on productsizeId
+      const product = products.find(p => p.sizes.some(size => size.id === item.productsizeId));
 
-      if (!perfume) return sum;  // If no matching perfume is found, skip this item
+      if (!product) return sum;  // If no matching product is found, skip this item
 
       // Find the corresponding size for this cart item
-      const size = perfume.sizes.find(s => s.id === item.perfumeSizeId);
+      const size = product.sizes.find(s => s.id === item.productsizeId);
 
       // Add the price to the total, considering the quantity of the item
       return sum + (size?.price || 0) * item.quantity;
     }, 0);
   };
 
-  const getCartItemDetails = (perfumeSizeId) => {
-    // Find the perfume based on the perfumeSizeId
-    const perfume = perfumes.find(p =>
-      p.sizes.some(s => s.id === perfumeSizeId) // Check if the size matches
+  const getCartItemDetails = (productsizeId) => {
+    // Find the product based on the productsizeId
+    const product = products.find(p =>
+      p.sizes.some(s => s.id === productsizeId) // Check if the size matches
     );
 
-    if (!perfume) return null;
+    if (!product) return null;
 
-    // Find the size within the found perfume
-    const size = perfume.sizes.find(s => s.id === perfumeSizeId);
+    // Find the size within the found product
+    const size = product.sizes.find(s => s.id === productsizeId);
 
     return {
-      perfume,
+      product,
       size
     };
   };
-  const isFavorite = (perfumeId) => favorites.some(f => f.perfumeId === perfumeId);
-  const getCartItem = (perfumeId) => cartItems.find(item => item.perfumeId === perfumeId);
+  const getCartItem = (productId) => cartItems.find(item => item.productId === productId);
   const getCartItemById = (id) => cartItems.find(item => item.id === id);
 
   const value = {
@@ -256,21 +231,18 @@ export const AppProvider = ({ children }) => {
     logout,
 
     // Data
-    perfumes,
-    perfumeNotes,
-    favorites,
+    products,
+    categories,
     cartItems,
     loading,
     error,
 
     // Actions
-    toggleFavorite,
     addToCart,
     removeFromCart,
     updateCartItemQuantity,
 
     // Helpers
-    isFavorite,
     getCartItem,
     getCartItemById,
     getTotalItems,

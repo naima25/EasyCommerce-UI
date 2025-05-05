@@ -8,7 +8,7 @@ import { FaShoppingCart } from "react-icons/fa";
 const Header = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const { isAuthenticated, logout, getTotalItems } = useAppContext();
-  const { cart } = useCart(); // Now we get the whole cart object
+  const { cart } = useCart(); 
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -56,15 +56,6 @@ const Header = () => {
             onClick={closeMenu}
           >
             About Us
-          </Link>
-        </li>
-        <li>
-          <Link
-            to="/search"
-            className={location.pathname === "/search" ? "active" : ""}
-            onClick={closeMenu}
-          >
-            Search
           </Link>
         </li>
         <li>

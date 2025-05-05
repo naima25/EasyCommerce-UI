@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import ProductCard from '../components/ProductCard';  // Fixed the import statement
-import '../styles/OurProducts.css';  // Assuming this is the correct path
+import ProductCard from '../components/ProductCard';  
+import '../styles/OurProducts.css';  
 
 const OurProducts = () => {
   const [categories, setCategories] = useState([]); // State for categories

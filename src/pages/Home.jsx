@@ -16,19 +16,19 @@ function HomePage() {
         <div className="card-grid">
           {[
             {
-              title: "Gaming Headset",
-              price: "89.99",
-              image: "https://m.media-amazon.com/images/I/71rwPzXKDGL._AC_SL1500_.jpg"
+              title: "Yves Saint Laurent Rouge Pur Couture Lipstick",
+              price: "36.00",
+              image: "https://media.johnlewiscontent.com/i/JohnLewis/111119525?fmt=auto&$background-off-white$&wid=640&hei=853"
             },
             { 
-              title: "Standing Desk", 
-              price: "59.99", 
-              image: "https://m.media-amazon.com/images/I/61xrbRLOmZL.__AC_SY300_SX300_QL70_ML2_.jpg" 
+              title: "ERDEM Double Breasted Twill Blazer", 
+              price: "1795.00", 
+              image: "https://media.johnlewiscontent.com/i/JohnLewis/009833409alt3?fmt=auto&$background-off-white$&wid=640&hei=853" 
             },
             { 
-              title: "Effaclar Serum", 
-              price: "39.99", 
-              image: "https://www.laroche-posay.co.uk/dw/image/v2/AAQP_PRD/on/demandware.static/-/Sites-lrp-ng-master-catalog/en_GB/dwab542d6c/LRP_Product/Effaclar/3337875722827_EFFACLAR-SERUM_30ml_01_La-Roche-Posay.jpg" 
+              title: "Nars: Dolce blush", 
+              price: "27.00", 
+              image: "https://media.johnlewiscontent.com/i/JohnLewis/111530320?fmt=auto&$background-off-white$&wid=640&hei=853"
             }
           ].map((product, index) => (
             <div key={index} className="card">

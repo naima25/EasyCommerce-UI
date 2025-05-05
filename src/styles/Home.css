@@ -20,14 +20,14 @@
   font-family: Calibri, sans-serif;
   font-size: 2.0rem; 
   margin-bottom: 10px;
-  color: #2c4550;
+  color: #490541;
 }
 
 /* Supporting text */
 .hero p {
   font-size: 1.2rem;
   margin-bottom: 20px;
-  color: #555;
+  color: #4e041f;
 }
 
 /* Button / link */
@@ -42,7 +42,7 @@
   font-weight: bold;
 }
 
-/* Card styles (can keep as is) */
+
 .card-grid {
   display: flex;
   justify-content: center;
@@ -64,3 +64,10 @@
   object-fit: contain;
   border-radius: 5px;
 }
+
+.cards-section h2 {
+  text-align: center;
+  color: #490541; 
+  margin-bottom: 20px; 
+}
+

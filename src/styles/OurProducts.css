@@ -1,27 +1,33 @@
-/* Ensure that the Categories section starts below the fixed navbar */
-.categories-container {
-  margin-top: 70px;  /* Adjusted for navbar height and padding */
+/* Push content below fixed navbar */
+.our-products-container {
+  margin-top: 100px; /* Adjust based on your navbar height */
+  padding: 1rem;
 }
 
-/* Top Header (for categories) */
+/* Categories Header Section */
 .categories-header {
   display: flex;
   justify-content: center;
-  align-items: center;
-  gap: 1rem;
   margin-bottom: 2rem;
 }
 
-.categories-header span {
-  font-size: 1.25rem;
+.categories-header button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1.1rem;
   font-weight: bold;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  background-color: #f0f0f0;
-  color: #333;
+  background-color: #ff4096;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s ease;
 }
 
-/* Category Row */
+.categories-header button:hover {
+  background-color: #fa00ddf0;
+}
+
+/* Category Buttons Row */
 .category-row {
   display: flex;
   justify-content: center;
@@ -30,36 +36,34 @@
   margin-bottom: 2rem;
 }
 
-.category-item {
+.category-button {
   padding: 0.75rem 1.25rem;
   border-radius: 8px;
   background-color: #e0e0e0;
-  color: #333;
+  color: #333333;
   cursor: pointer;
   font-weight: 500;
   transition: 0.3s;
+  border: none;
 }
 
-/* Optional hover effect */
-.category-item:hover {
+.category-button:hover {
   background-color: #fa00ddf0;
   color: white;
 }
 
+.category-button.active {
+  background-color: #fa00ddf0;
+  color: white;
+}
+
+/* Products Grid */
 .products-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;  /* Add space between products */
-  justify-content: space-around;  /* Evenly distribute the products */
+  gap: 30px;
+  justify-content: center;
 }
-
-.product-card {
-  flex: 1 1 calc(33% - 20px);  /* 3 items per row */
-  box-sizing: border-box;  /* Ensure padding/margins are accounted for */
-  max-width: 300px;  /* Max width for each product card */
-}
-
-
 
 
 
