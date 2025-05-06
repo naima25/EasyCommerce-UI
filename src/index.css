@@ -1,3 +1,15 @@
+/*
+  index.css
+
+  - :root: Sets global font styles, color scheme (light/dark), background color, and smooth font rendering.
+  - a: Styles links with a default color and hover effect.
+  - body: Centers content with flexbox, ensuring a minimum width and height for responsiveness.
+  - h1: Adjusts header size and line-height for readability.
+  - button: Styles buttons with padding, border, background, and transition effects, including hover and focus states.
+  - @media (light mode): Adjusts styles for light mode (text and background colors, link hover, and button background).
+*/
+
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
