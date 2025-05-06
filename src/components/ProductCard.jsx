@@ -3,6 +3,14 @@ import { useCart } from '../context/CartContext'; // 🛒 Import the cart contex
 import { useAppContext } from '../context/AppContext';
 import '../styles/productcard.css';
 
+/*
+  ProductCard.jsx
+
+  This component displays a single product's information:
+  - It shows the product image, name, and price.
+  - Users can increase or decrease the quantity.
+  - Clicking "Add to Cart" adds the product (with selected quantity) to the cart.
+*/
 
 const ProductCard = ({ product }) => {
   const { addToCart } = useAppContext(); // 🛒 Get addToCart from context
