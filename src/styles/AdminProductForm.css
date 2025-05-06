@@ -16,7 +16,7 @@
   h2 {
     font-size: 1.75rem;
     font-weight: bold;
-    color: #333;
+    color: #852981;
     margin-bottom: 1rem;
     text-align: center;
   }
@@ -60,7 +60,7 @@
   }
   
   button.submit-button:hover {
-    background-color: #45a049;
+    background-color: #f82dd6;
   }
   
   /* Mobile responsiveness */

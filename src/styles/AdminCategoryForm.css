@@ -29,7 +29,7 @@
   /* Back buttons styling */
   .back-to-categories-button,
   .back-to-products-button {
-    background: #4CAF50; /* Matches the green color from the AdminProductsPage */
+    background: #852981; /* Matches the green color from the AdminProductsPage */
     color: white;
     padding: 0.5rem 1rem;
     text-decoration: none;
@@ -41,7 +41,7 @@
   /* Hover effects */
   .back-to-categories-button:hover,
   .back-to-products-button:hover {
-    background-color: #45a049;  /* Slightly darker green when hovering */
+    background-color: #ffe748;  /* Slightly darker green when hovering */
   }
   
   /* Focus effect for accessibility */
