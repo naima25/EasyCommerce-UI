@@ -2,6 +2,20 @@ import React, { useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
 import '../styles/Cart.css'; 
 
+/* 
+  CartPage Component:
+  This component displays the shopping cart page for the user. It allows the user to view the items in their cart, remove items, 
+  and see the total price of the cart.
+
+  Key Features:
+    1. **Loading and Error Handling**: The component shows a loading message while fetching the cart data and an error message if there’s an issue.
+    2. **Display Cart Items**: It maps through the items in the cart and displays each product's name, quantity, and price. A placeholder image is shown if no image URL is available.
+    3. **Remove Item**: Each item has a "Remove" button that allows the user to remove it from the cart by calling the `removeFromCart` function from the AppContext.
+    4. **Cart Total**: The total price of the items in the cart is displayed at the bottom. It calculates the total based on the prices of the items.
+    5. **Empty Cart**: If the cart is empty, a message is shown indicating that the cart is empty.
+
+  The component uses `useAppContext` to access the cart data and actions such as adding, removing, and updating cart items.
+*/
 
 const CartPage = () => {
   const { cart, loading, error, addToCart, removeFromCart, updateCartItemQuantity } = useAppContext();
