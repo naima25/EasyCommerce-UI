@@ -6,13 +6,28 @@ import '../styles/AdminProductForm.css';
 import '../styles/AdminCategoryForm.css';
 
 const AdminCategoryForm = () => {
-  const { id } = useParams(); // Get category ID from URL if we're editing
+  /*
+    Get the category ID from the URL (if we're editing an existing category).
+    Also set up a tool (navigate) to move to a different page after saving.
+  */
+  const { id } = useParams(); 
   const navigate = useNavigate();
+
+    /*
+    Set up the form's starting values.
+    Right now, we only have one field: name.
+    Also track whether we're editing an existing category or adding a new one.
+  */
 
   const [category, setCategory] = useState({
     name: '',
   });
   const [isEditing, setIsEditing] = useState(false);
+
+    /*
+    When the page loads, check if there's a category ID.
+    If there is, we're editing, so go get the category info from the server.
+  */
 
   useEffect(() => {
     // If we have a category ID, fetch the category data for editing
@@ -30,11 +45,23 @@ const AdminCategoryForm = () => {
     }
   }, [id]);
 
+    /*
+    Update the form whenever the user types something.
+    This keeps track of what they type into the input box.
+  */
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCategory((prev) => ({ ...prev, [name]: value }));
   };
 
+    /*
+    When the user submits the form:
+    - If editing, update the existing category.
+    - If adding, create a new one.
+    Then show a message and go back to the categories list.
+  */
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
