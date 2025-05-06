@@ -28,15 +28,15 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: List project files (for debugging)
+      - name: List files in src/styles (debugging)
         run: |
-          echo "Listing files in the project directory"
-          ls -R ./src
+          echo "Listing files in the src/styles directory"
+          ls -R ./src/styles
 
       - name: Run build
         run: npm run build
 
-      - name: Verify build output (Optional)
+      - name: Verify build output (debugging)
         run: |
           echo "Listing build output"
           ls -R ./dist
