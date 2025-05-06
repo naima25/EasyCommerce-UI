@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useCart } from '../context/CartContext'; // 🛒 Import the cart context
 import { useAppContext } from '../context/AppContext';
 import '../styles/productcard.css';
 

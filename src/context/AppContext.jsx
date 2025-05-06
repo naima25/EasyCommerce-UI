@@ -215,86 +215,200 @@ export const AppProvider = ({ children }) => {
     };
 
 
-  const removeFromCart = async (cartItemId) => {
-    try {
-      await api.delete(`/cart/${cartItemId}`);
-      setCart(prev => prev.filter(item => item.id !== cartItemId));
-    } catch (err) {
-      throw err;
-    }
-  };
-
-  const updateCartItemQuantity = async (cartItemId, newQuantity) => {
-    try {
-      // Find the cart item with the matching cartItemId
-      const cartItem = cart.find(item => item.id === cartItemId);
-
-      // If the cartItem doesn't exist, throw an error
-      if (!cartItem) {
-        throw new Error('Cart item not found');
+    const removeFromCart = async (productId) => {
+      try {
+        setLoading(true);
+        
+        if (!cart) {
+          throw new Error('No cart exists');
+        }
+  
+        // Find the item to remove
+        const itemToRemove = cart.cartItems.find(item => item.productId === productId);
+        if (!itemToRemove) {
+          throw new Error('Item not found in cart');
+        }
+  
+        // Calculate new price
+        const newPrice = cart.price - (itemToRemove.quantity * itemToRemove.product.price);
+  
+        // Filter out the removed item
+        const updatedCartItems = cart.cartItems.filter(item => item.productId !== productId);
+  
+        // Prepare the request body
+        const requestBody = {
+          customerId: userId,
+          cartItems: updatedCartItems,
+          price: newPrice,
+          id: cart.id,
+          customer: cart.customer
+        };
+  
+        // Update the cart on the server
+        const response = await api.put(`/cart/${cart.id}`, requestBody);
+  
+        if (response?.status !== 204) {
+          throw new Error('Failed to remove item from cart');
+        }
+  
+        // Update local state
+        setCart(prevCart => ({
+          ...prevCart,
+          cartItems: updatedCartItems,
+          price: newPrice
+        }));
+  
+        return true;
+      } catch (err) {
+        setError(err.message);
+        return false;
+      } finally {
+        setLoading(false);
       }
-
-      // Update the quantity while maintaining other properties of the cart item
-      const updatedCartItem = {
-        ...cartItem,  // Spread the current cart item to keep other fields unchanged
-        quantity: Math.max(1, newQuantity)  // Update the quantity
-      };
-
-      // Send the PUT request with the updated cart item
-      const response = await api.put(`/cart/${cartItemId}`, updatedCartItem);
-
-      // Check if the server responded with a success (204 No Content)
-      if (response.status === 204) {
-        // Update the cart items state (since no data is returned, use the updated cartItem)
-        setCart(prev =>
-          prev.map(item => item.id === cartItemId ? updatedCartItem : item)
-        );
-      } else {
-        throw new Error('Failed to update cart item');
-      }
-
-    } catch (err) {
-      console.error('Error updating cart item:', err);
-      throw err;
-    }
-  };
-
-
-  // Helper functions
-  const getTotalItems = () => cart.reduce((sum, item) => sum + item.quantity, 0);
-  const getTotalPrice = () => {
-    return cart.reduce((sum, item) => {
-      // Find the product based on productsizeId
-      const product = products.find(p => p.sizes.some(size => size.id === item.productsizeId));
-
-      if (!product) return sum;  // If no matching product is found, skip this item
-
-      // Find the corresponding size for this cart item
-      const size = product.sizes.find(s => s.id === item.productsizeId);
-
-      // Add the price to the total, considering the quantity of the item
-      return sum + (size?.price || 0) * item.quantity;
-    }, 0);
-  };
-
-  const getCartItemDetails = (productsizeId) => {
-    // Find the product based on the productsizeId
-    const product = products.find(p =>
-      p.sizes.some(s => s.id === productsizeId) // Check if the size matches
-    );
-
-    if (!product) return null;
-
-    // Find the size within the found product
-    const size = product.sizes.find(s => s.id === productsizeId);
-
-    return {
-      product,
-      size
     };
-  };
-  const getCartItem = (productId) => cart.find(item => item.productId === productId);
-  const getCartItemById = (id) => cart.find(item => item.id === id);
+  
+    const updateCartItemQuantity = async (productId, newQuantity) => {
+      try {
+        setLoading(true);
+        
+        if (!cart) {
+          throw new Error('No cart exists');
+        }
+  
+        // Find the item to update
+        const itemIndex = cart.cartItems.findIndex(item => item.productId === productId);
+        if (itemIndex === -1) {
+          throw new Error('Item not found in cart');
+        }
+  
+        // Calculate price difference
+        const oldItem = cart.cartItems[itemIndex];
+        const priceDifference = (newQuantity - oldItem.quantity) * oldItem.product.price;
+        const newPrice = cart.price + priceDifference;
+  
+        // Update the item's quantity
+        const updatedCartItems = [...cart.cartItems];
+        updatedCartItems[itemIndex] = {
+          ...updatedCartItems[itemIndex],
+          quantity: newQuantity
+        };
+  
+        // Prepare the request body
+        const requestBody = {
+          customerId: userId,
+          cartItems: updatedCartItems,
+          price: newPrice,
+          id: cart.id,
+          customer: cart.customer
+        };
+  
+        // Update the cart on the server
+        const response = await api.put(`/cart/${cart.id}`, requestBody);
+  
+        if (response?.status !== 204) {
+          throw new Error('Failed to update cart item quantity');
+        }
+  
+        // Update local state
+        setCart(prevCart => ({
+          ...prevCart,
+          cartItems: updatedCartItems,
+          price: newPrice
+        }));
+  
+        return true;
+      } catch (err) {
+        setError(err.message);
+        return false;
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    const clearCart = async () => {
+      try {
+        setLoading(true);
+        
+        if (!cart) {
+          throw new Error('No cart exists');
+        }
+  
+        // Update the cart on the server
+        const response = await api.put(`/cart/${cart.id}`, {
+          customerId: userId,
+          cartItems: [],
+          price: 0,
+          id: cart.id,
+          customer: cart.customer
+        });
+  
+        if (response?.status !== 204) {
+          throw new Error('Failed to clear cart');
+        }
+  
+        // Update local state
+        setCart(prevCart => ({
+          ...prevCart,
+          cartItems: [],
+          price: 0
+        }));
+  
+        return true;
+      } catch (err) {
+        setError(err.message);
+        return false;
+      } finally {
+        setLoading(false);
+      }
+    };
+
+
+    // orders
+    const createOrder = async () => {
+      try {
+        setLoading(true);
+        
+        if (!cart || cart.cartItems.length === 0) {
+          throw new Error('Cart is empty');
+        }
+    
+        const orderDate = new Date().toISOString();
+        
+        const orderItems = cart.cartItems.map(item => ({
+          productId: item.productId,
+          product: item.product,
+          quantity: item.quantity
+        }));
+    
+        const requestBody = {
+          customerId: userId,
+          price: cart.price,
+          orderDate: orderDate,
+          orderItems: orderItems
+        };
+    
+        const response = await api.post('/order', requestBody);
+    
+        if (response.status !== 201) {
+          throw new Error('Failed to create order');
+        }
+    
+        // Clear the cart after successful order creation
+        await clearCart();
+    
+        // Refresh orders list
+        const ordersResponse = await api.get('/order');
+        setOrders(ordersResponse.data);
+    
+        return { success: true, order: response.data };
+      } catch (err) {
+        setError(err.message);
+        return { success: false, message: err.message };
+      } finally {
+        setLoading(false);
+      }
+    };
+  
 
   const value = {
     // Auth
@@ -311,6 +425,7 @@ export const AppProvider = ({ children }) => {
     setFilteredProducts,
     categories,
     cart,
+    orders,
     loading,
     error,
 
@@ -319,13 +434,17 @@ export const AppProvider = ({ children }) => {
     addToCart,
     removeFromCart,
     updateCartItemQuantity,
+    clearCart,
+    fetchCart,
+    createOrder
+
 
     // Helpers
-    getCartItem,
-    getCartItemById,
-    getTotalItems,
-    getTotalPrice,
-    getCartItemDetails
+    // getCartItem,
+    // getCartItemById,
+    // getTotalItems,
+    // getTotalPrice,
+    // getCartItemDetails
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
