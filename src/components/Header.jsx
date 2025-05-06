@@ -2,13 +2,11 @@ import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../styles/Header.css";
 import { useAppContext } from "../context/AppContext"; 
-import { useCart } from "../context/CartContext"; 
 import { FaShoppingCart } from "react-icons/fa";
 
 const Header = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
-  const { isAuthenticated, logout, getTotalItems } = useAppContext();
-  const { cart } = useCart(); 
+  const { cart, isAuthenticated, logout, getTotalItems } = useAppContext();
   const location = useLocation();
   const navigate = useNavigate();
 
