@@ -17,10 +17,26 @@ jobs:
         with:
           node-version: 23.10.0
 
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Install dependencies
         run: npm install
 
-      - name: Run dev 
-        run: npm run build 
+      - name: List project files (for debugging)
+        run: |
+          echo "Listing files in the project directory"
+          ls -R ./src
 
-     
+      - name: Run build
+        run: npm run build
+
+      - name: Verify build output (Optional)
+        run: |
+          echo "Listing build output"
+          ls -R ./dist
