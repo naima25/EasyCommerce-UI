@@ -1,7 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import '../styles/AdminProductsPage.css'; // Reuse CSS file
+import '../styles/AdminProductsPage.css';
+
+/* 
+  AdminCategoriesPage Component:
+  This component is designed for the admin interface to manage product categories. It allows the admin to view, add, edit, and delete categories.
+
+  Key Features:
+    1. **Fetch Categories**: The component fetches a list of categories from the backend API when it mounts, using the `axios` library. It stores the data in the `categories` state.
+    2. **Loading and Error Handling**: The component handles loading and error states using `loading` and `error` states. A loading message is displayed until the categories are fetched, and an error message is shown if the fetch fails.
+    3. **Add New Category**: A button at the top of the page allows the admin to navigate to a page for adding a new category (`/admin/categories/new`).
+    4. **Delete Category**: Each category has a delete button that allows the admin to remove a category from the system. This triggers a confirmation prompt before deleting.
+    5. **Edit Category**: Each category also has an edit button that takes the admin to the category edit page (`/admin/categories/edit/:id`).
+    6. **Navigation**: There is a button to navigate back to the products dashboard.
+*/
 
 const AdminCategoriesPage = () => {
   const [categories, setCategories] = useState([]);
