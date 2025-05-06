@@ -1,4 +1,8 @@
-/* cart.css */
+/* cart.css
+
+  This CSS file defines the styling for the "Cart Page" component, which displays the user's shopping cart, 
+  including the list of items, their details, and a total price. The design is intended to be clean, user-friendly, 
+  and responsive across devices. */
 
 .cart-page {
     padding: 100px 20px 40px;
