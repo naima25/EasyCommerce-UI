@@ -4,6 +4,17 @@ import "../styles/Header.css";
 import { useAppContext } from "../context/AppContext"; 
 import { FaShoppingCart } from "react-icons/fa";
 
+/*
+  Header.jsx
+
+  This component displays the navigation bar at the top of the site.
+  - It includes links to different pages (Home, Products, About, Cart, etc.).
+  - It shows the number of items in the shopping cart.
+  - If a user is logged in, it shows options like "Profile" and "Logout".
+  - If not logged in, it shows a link to the Account/Login page.
+  - On smaller screens, the menu can be toggled open or closed.
+*/
+
 const Header = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const { cart, isAuthenticated, logout, getTotalItems } = useAppContext();
