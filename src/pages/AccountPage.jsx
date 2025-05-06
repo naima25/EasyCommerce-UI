@@ -2,7 +2,13 @@ import React, { useState } from 'react';
 import LoginPage from './LoginPage';
 import RegisterPage from './RegisterPage';
 import '../styles/account.css'; // Correct path to the CSS file
+/* 
+  AccountPage Component:
+  This component is responsible for rendering either the login or register form based on the user's interaction.
+  It uses a state variable `isLogin` to toggle between the LoginPage and RegisterPage components.
 
+  */
+ 
 const AccountPage = () => {
   const [isLogin, setIsLogin] = useState(true);  // State to toggle between login and register
 

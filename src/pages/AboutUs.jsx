@@ -2,6 +2,17 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import "../styles/AboutUs.css";
 
+/* 
+  AboutUs Component:
+  This component is the 'About Us' page for the EasyCommerce platform. It provides information about the company's mission, values, and what sets it apart from other ecommerce platforms. 
+  The page is structured into three main sections:
+    -  Hero Section
+   - Our Passion Section
+   - Values Section
+
+  This component is styled using an external CSS file and renders a simple, informative layout for visitors to learn more about EasyCommerce.
+*/
+
 const AboutUs = () => {
   return (
     <div className="about-us-container">
