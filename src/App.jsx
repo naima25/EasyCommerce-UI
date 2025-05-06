@@ -60,7 +60,7 @@ const App = () => {
               {/* Add New Category */}
               <Route path="/admin/categories/new" element={<AdminCategoryForm />} />
               
-              {/* Edit Category: Use category ID in URL */}
+              {/* Edit Category: Use category ID in the URL */}
               <Route path="/admin/categories/edit/:id" element={<AdminCategoryForm />} />
 
             </Routes>
