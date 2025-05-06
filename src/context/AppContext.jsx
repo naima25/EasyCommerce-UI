@@ -408,7 +408,141 @@ export const AppProvider = ({ children }) => {
         setLoading(false);
       }
     };
-  
+
+    // Add these to your AppContext provider
+const cancelOrder = async (orderId) => {
+  try {
+    setLoading(true);
+    const response = await api.delete(`/order/${orderId}`);
+    
+    if (response.status !== 204) {
+      throw new Error('Failed to cancel order');
+    }
+
+    // Update local orders state
+    setOrders(prevOrders => prevOrders.filter(order => order.id !== orderId));
+    
+    return true;
+  } catch (err) {
+    setError(err.message);
+    return false;
+  } finally {
+    setLoading(false);
+  }
+};
+
+const updateOrderItemQuantity = async (orderId, orderItemId, newQuantity) => {
+  try {
+    setLoading(true);
+    
+    // Find the order to update
+    const orderToUpdate = orders.find(order => order.id === orderId);
+    if (!orderToUpdate) {
+      throw new Error('Order not found');
+    }
+
+    // Find and update the item
+    const updatedOrderItems = orderToUpdate.orderItems.map(item => {
+      if (item.id === orderItemId) {
+        return { ...item, quantity: newQuantity };
+      }
+      return item;
+    });
+
+    // Calculate new total price
+    const newPrice = updatedOrderItems.reduce(
+      (total, item) => total + (item.quantity * item.product.price),
+      0
+    );
+
+    // Prepare request body
+    const requestBody = {
+      ...orderToUpdate,
+      orderItems: updatedOrderItems,
+      price: newPrice
+    };
+
+    // Update on server
+    const response = await api.put(`/order/${orderId}`, requestBody);
+    console.log('Update response:', response);
+    if (response.status < 200 || response.status >= 300) {
+      throw new Error('Failed to update order item quantity');
+    }
+
+    // Update local state
+    setOrders(prevOrders =>
+      prevOrders.map(order =>
+        order.id === orderId
+          ? { ...order, orderItems: updatedOrderItems, price: newPrice }
+          : order
+      )
+    );
+
+    return true;
+  } catch (err) {
+    console.error('Update quantity error:', err); 
+    setError(err.message);
+    return false;
+  } finally {
+    setLoading(false);
+  }
+};
+
+const removeOrderItem = async (orderId, orderItemId) => {
+  try {
+    setLoading(true);
+    
+    // Find the order to update
+    const orderToUpdate = orders.find(order => order.id === orderId);
+    if (!orderToUpdate) {
+      throw new Error('Order not found');
+    }
+
+    // Find the item to remove
+    const itemToRemove = orderToUpdate.orderItems.find(item => item.id === orderItemId);
+    if (!itemToRemove) {
+      throw new Error('Order item not found');
+    }
+
+    // Filter out the removed item
+    const updatedOrderItems = orderToUpdate.orderItems.filter(
+      item => item.id !== orderItemId
+    );
+
+    // Calculate new total price
+    const newPrice = orderToUpdate.price - (itemToRemove.quantity * itemToRemove.product.price);
+
+    // Prepare request body
+    const requestBody = {
+      ...orderToUpdate,
+      orderItems: updatedOrderItems,
+      price: newPrice
+    };
+
+    // Update on server
+    const response = await api.put(`/order/${orderId}`, requestBody);
+
+    if (response.status !== 204) {
+      throw new Error('Failed to remove order item');
+    }
+
+    // Update local state
+    setOrders(prevOrders =>
+      prevOrders.map(order =>
+        order.id === orderId
+          ? { ...order, orderItems: updatedOrderItems, price: newPrice }
+          : order
+      )
+    );
+
+    return true;
+  } catch (err) {
+    setError(err.message);
+    return false;
+  } finally {
+    setLoading(false);
+  }
+};
 
   const value = {
     // Auth
@@ -436,15 +570,11 @@ export const AppProvider = ({ children }) => {
     updateCartItemQuantity,
     clearCart,
     fetchCart,
-    createOrder
+    createOrder, 
+    cancelOrder,
+    updateOrderItemQuantity,
+    removeOrderItem
 
-
-    // Helpers
-    // getCartItem,
-    // getCartItemById,
-    // getTotalItems,
-    // getTotalPrice,
-    // getCartItemDetails
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

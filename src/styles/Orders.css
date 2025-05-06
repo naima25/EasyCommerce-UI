@@ -67,3 +67,118 @@
   .order-item-details {
     flex-grow: 1;
   }
+
+.order-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .cancel-order-button {
+    background-color: #ff44ab;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .cancel-order-button:hover {
+    background-color: #cc0000;
+  }
+  
+  .order-total {
+    font-weight: bold;
+    font-size: 1.1em;
+  }
+  
+  .remove-order-item-button {
+    background-color: #ff6b6b;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    align-self: flex-start;
+  }
+  
+  .remove-order-item-button:hover {
+    background-color: #da0a91;
+  }
+  
+  .quantity-display {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .edit-quantity-button {
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    padding: 3px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  
+  .edit-quantity-button:hover {
+    background-color: #45a049;
+  }
+  
+  .quantity-edit {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 5px 0;
+  }
+  
+  .quantity-input {
+    width: 50px;
+    padding: 3px;
+    text-align: center;
+  }
+  
+  .save-quantity-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 3px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  
+  .save-quantity-button:hover {
+    background-color: #45a049;
+  }
+  
+  .cancel-edit-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 3px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  
+  .cancel-edit-button:hover {
+    background-color: #d32f2f;
+  }
+  
+  .order-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    justify-content: space-between;
+    gap: 15px;
+  }
+  
+  .order-item-details {
+    flex-grow: 1;
+  }
