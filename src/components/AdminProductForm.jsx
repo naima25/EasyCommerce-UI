@@ -3,6 +3,15 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../styles/AdminProductForm.css'; 
 
+/*
+
+  This component is used to add or edit products in the admin panel.
+  - If there's an ID in the URL, it fetches product details and allows editing.
+  - If not, it shows a blank form to create a new product.
+  - It also fetches available categories to choose from in a dropdown.
+  - After submitting, it saves the product and navigates back to the product list.
+*/
+
 const AdminProductForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
