@@ -41,7 +41,7 @@
   /* Hover effects */
   .back-to-categories-button:hover,
   .back-to-products-button:hover {
-    background-color: #ffe748;  /* Slightly darker green when hovering */
+    background-color: #ffe748;  
   }
   
   /* Focus effect for accessibility */
