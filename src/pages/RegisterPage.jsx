@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
 import { registerUser } from '../services/AuthService';
 
+/*
+  RegisterPage component:
+  - Provides a form for users to register with an email and password.
+  - Handles the form submission by calling the `registerUser` service function.
+  - Displays success or error messages based on the registration outcome.
+*/
+
+
 const RegisterPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
