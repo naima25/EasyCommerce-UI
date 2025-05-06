@@ -1,3 +1,10 @@
+/* 
+  product-card.css
+
+  This CSS file defines the styling for individual product cards that are displayed in a grid or flex layout. 
+  The styles aim to create visually appealing and interactive cards that scale well on different screen sizes.
+*/
+
 .product-card {
     flex: 1 1 calc(25% - 30px);
     max-width: 320px;
