@@ -13,7 +13,7 @@
 }
 
 h2 {
-  text-align: left;  /* Aligns "Products" to the left */
+  text-align: left;  /* Aligns "Products" to the left and deals with h2 element */
   font-size: 1.25rem;  /* Slightly smaller font size */
   font-weight: 600;
   margin-bottom: 0.5rem;  /* Adjust margin to place it lower */
