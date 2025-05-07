@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext';
-import '../styles/productcard.css';
+import '../styles/ProductCard.css';
+
 
 /*
   ProductCard.jsx
