@@ -449,6 +449,7 @@ const updateOrderItemQuantity = async (orderId, orderItemId, newQuantity) => {
       return item;
     });
 
+  
     // Calculate new total price
     const newPrice = updatedOrderItems.reduce(
       (total, item) => total + (item.quantity * item.product.price),
@@ -457,12 +458,22 @@ const updateOrderItemQuantity = async (orderId, orderItemId, newQuantity) => {
 
     // Prepare request body
     const requestBody = {
-      ...orderToUpdate,
-      orderItems: updatedOrderItems,
-      price: newPrice
+      id: orderId, // Order ID
+      customerId: orderToUpdate.customerId, // Customer ID
+      price: newPrice, // The updated price
+      orderDate: orderToUpdate.orderDate, // The updated order date
+      orderItems: updatedOrderItems.map(item => ({
+        id: item.id, // Order item ID (used to identify the specific item being updated)
+        productId: item.productId, // The product ID
+        quantity: item.quantity, // Updated quantity
+        product: item.product // Full product details (name, price, etc.)
+      }))
     };
+    
+    
 
     // Update on server
+    console.log('Sending update:', requestBody);
     const response = await api.put(`/order/${orderId}`, requestBody);
     console.log('Update response:', response);
     if (response.status < 200 || response.status >= 300) {
@@ -500,7 +511,9 @@ const removeOrderItem = async (orderId, orderItemId) => {
 
     // Find the item to remove
     const itemToRemove = orderToUpdate.orderItems.find(item => item.id === orderItemId);
+    console.log("Item to Remove:", itemToRemove);
     if (!itemToRemove) {
+      console.log("Item not found");
       throw new Error('Order item not found');
     }
 
@@ -511,13 +524,24 @@ const removeOrderItem = async (orderId, orderItemId) => {
 
     // Calculate new total price
     const newPrice = orderToUpdate.price - (itemToRemove.quantity * itemToRemove.product.price);
+    console.log(updatedOrderItems); // Log to verify
 
     // Prepare request body
     const requestBody = {
-      ...orderToUpdate,
-      orderItems: updatedOrderItems,
-      price: newPrice
+      id: orderId, // Order ID
+      customerId: orderToUpdate.customerId, // Customer ID
+      price: newPrice, // The updated price
+      orderDate: orderToUpdate.orderDate, // The updated order date
+      orderItems: updatedOrderItems.map(item => ({
+        id: item.id, // Order item ID (used to identify the specific item being updated)
+        productId: item.productId, // The product ID
+        quantity: item.quantity, // Updated quantity
+        product: item.product // Full product details (name, price, etc.)
+      }))
     };
+    
+    console.log("Request Body:", requestBody); // Log to verify request body
+    
 
     // Update on server
     const response = await api.put(`/order/${orderId}`, requestBody);
