@@ -23,7 +23,7 @@ const OrdersPage = () => {
       
       {orders?.length > 0 ? (
         <div>
-          {orders.map((order) => (
+          {orders?.map((order) => (
             <div key={order.id} className="order">
               <div className="order-header">
                 <div>
@@ -46,7 +46,7 @@ const OrdersPage = () => {
               </div>
               
               <div className="order-items">
-                {order.orderItems.map((item) => (
+                {order?.orderItems?.map((item) => (
                   <div key={`${order.id}-${item.id}`} className="order-item">
                     <img
                       src={item.product?.imageUrl || 'placeholder-image-url'}

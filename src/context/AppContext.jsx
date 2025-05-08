@@ -41,7 +41,7 @@ export const AppProvider = ({ children }) => {
         if (token) {
           const decodedToken = jwtDecode(token);
           console.log("decodedToken: ", decodedToken);
-          setUserRole(decodedToken.role);
+          setUserRole(decodedToken.role === "Admin" ? "Admin" : "User");
 
           const userId = decodedToken.userId;
           console.log("userId: ", userId);
@@ -91,6 +91,7 @@ export const AppProvider = ({ children }) => {
   }, [token]);
 
   // Auth functions
+
   const login = async (email, password) => {
     try {
       setLoading(true);
@@ -567,6 +568,7 @@ const removeOrderItem = async (orderId, orderItemId) => {
     setLoading(false);
   }
 };
+
 
   const value = {
     // Auth
