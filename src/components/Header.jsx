@@ -4,20 +4,9 @@ import "../styles/Header.css";
 import { useAppContext } from "../context/AppContext"; 
 import { FaShoppingCart } from "react-icons/fa";
 
-/*
-  Header.jsx
-
-  This component displays the navigation bar at the top of the site.
-  - It includes links to different pages (Home, Products, About, Cart, etc.).
-  - It shows the number of items in the shopping cart.
-  - If a user is logged in, it shows options like "Profile" and "Logout".
-  - If not logged in, it shows a link to the Account/Login page.
-  - On smaller screens, the menu can be toggled open or closed.
-*/
-
 const Header = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
-  const { cart, isAuthenticated, logout, getTotalItems } = useAppContext();
+  const { cart, isAuthenticated, logout, getTotalItems, userRole } = useAppContext();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -34,7 +23,6 @@ const Header = () => {
     navigate("/home");
   };
 
-  // Updated to handle the new cart structure
   const totalCartQuantity = cart?.cartItems?.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
   return (
@@ -49,9 +37,10 @@ const Header = () => {
         </Link>
       </div>
       <ul className={`menu ${isMenuOpen ? "active" : ""}`}>
+        {/* Public Links - visible to everyone */}
         <li>
           <Link
-            to="/categories"
+            to="/our-products"
             className={location.pathname === "/our-products" ? "active" : ""}
             onClick={closeMenu}
           >
@@ -60,46 +49,55 @@ const Header = () => {
         </li>
         <li>
           <Link
-            to="/About-Us"
-            className={location.pathname === "/About-Us" ? "active" : ""}
+            to="/about-us"
+            className={location.pathname === "/about-us" ? "active" : ""}
             onClick={closeMenu}
           >
             About Us
           </Link>
         </li>
-        <li>
-          <Link
-            to="/my-orders"
-            className={location.pathname === "/my-orders" ? "active" : ""}
-            onClick={closeMenu}
-          >
-            My Orders
-          </Link>
-        </li>
 
-        <li className="nav-cart-item">
-          <Link
-            to="/cart"
-            className={`cart-link ${location.pathname === "/cart" ? "active" : ""}`}
-            onClick={closeMenu}
-          >
-            <span className="cart-text">
-              Cart <FaShoppingCart className="cart-icon" style={{ marginLeft: "5px" }} />
-              {totalCartQuantity > 0 && <span className="cart-counter">({totalCartQuantity})</span>}
-            </span>
-          </Link>
-        </li>
+        {/* User-specific Links - only visible to authenticated users with 'user' role */}
+        {isAuthenticated && userRole === "User" && (
+          <>
+            <li>
+              <Link
+                to="/my-orders"
+                className={location.pathname === "/my-orders" ? "active" : ""}
+                onClick={closeMenu}
+              >
+                My Orders
+              </Link>
+            </li>
+            <li className="nav-cart-item">
+              <Link
+                to="/cart"
+                className={`cart-link ${location.pathname === "/cart" ? "active" : ""}`}
+                onClick={closeMenu}
+              >
+                <span className="cart-text">
+                  Cart <FaShoppingCart className="cart-icon" style={{ marginLeft: "5px" }} />
+                  {totalCartQuantity > 0 && <span className="cart-counter">({totalCartQuantity})</span>}
+                </span>
+              </Link>
+            </li>
+          </>
+        )}
 
-        <li>
-          <Link
-            to="/admin/products"  
-            className={location.pathname.startsWith("/admin") ? "active" : ""}
-            onClick={closeMenu}
-          >
-            Dashboard
-          </Link>
-        </li>
+        {/* Admin-specific Links - only visible to authenticated users with 'admin' role */}
+        {isAuthenticated && userRole === "Admin" && (
+          <li>
+            <Link
+              to="/admin/products"  
+              className={location.pathname.startsWith("/admin") ? "active" : ""}
+              onClick={closeMenu}
+            >
+              Dashboard
+            </Link>
+          </li>
+        )}
 
+        {/* Auth Links - conditionally shown based on authentication status */}
         {isAuthenticated ? (
           <>
             <li>
