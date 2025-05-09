@@ -77,6 +77,7 @@ export const AppProvider = ({ children }) => {
         }
 
       } catch (err) {
+        console.log(err)
         setError(err.response?.data?.message || 'Failed to load data');
         if (err.response?.status === 401) logout();
       } finally {
@@ -130,7 +131,47 @@ export const AppProvider = ({ children }) => {
       setError(error.message);
     }
   }
-  
+  const deleteProduct = async (productId) => {
+      try {
+        await api.delete(`/product/${productId}`);
+        setProducts(products.filter(p => p.id !== productId));
+      } catch (err) {
+        setError('Delete failed: ' + err.message);
+      }
+  }
+
+  const getProductById = async (productId) => {
+        try {
+          const response = await api.get(`/product/${productId}`);
+          return {
+            ...response.data,
+            category: response.data.categoryIds?.[0] || '', // Assume first category ID if multiple
+          }
+        } catch (error) {
+          console.error('Failed to fetch product:', error);
+        }
+      };
+
+  const updateOrCreateProduct = async (isEditing, id, product) => {
+    if (isEditing) {
+        await api.put(`/product/${id}`, product);
+        alert('Product updated!');
+      } else {
+        const createRes = await api.post('/api/product', product);
+        const newProductId = createRes.data.id;
+
+        // Assign category
+        if (product.category) {
+          await api.post('/productcategory', {
+            productid: newProductId,
+            categoryid: parseInt(product.category),
+          });
+        }
+
+        alert('Product added!');
+      }
+  }
+      
 
   const addToCart = async (product) => {
     try {
@@ -202,7 +243,7 @@ export const AppProvider = ({ children }) => {
     const fetchCart = async (cartId, customerId) => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:5172/api/cart/${cartId}?customerId=${customerId}`);
+        const response = await api.get(`/api/cart/${cartId}?customerId=${customerId}`);
         if (!response.ok) throw new Error('Failed to fetch cart');
         const data = await response.json();
         console.log("data: ", data)
@@ -570,6 +611,25 @@ const removeOrderItem = async (orderId, orderItemId) => {
 };
 
 
+const deleteCategory = async (categoryId) => {
+  try {
+    await api.delete(`/category/${categoryId}`);
+    setCategories(categories.filter((c) => c.id !== categoryId));
+  } catch (err) {
+    setError('Delete failed: ' + err.message);
+  }
+} 
+
+const fetchCategory = async () => {
+  try {
+    const response = await api.get(`/category/${id}`);
+    return response.data;
+  } catch (err) {
+    console.error('Failed to fetch category:', err);
+  }
+};
+
+
   const value = {
     // Auth
     isAuthenticated,
@@ -591,6 +651,9 @@ const removeOrderItem = async (orderId, orderItemId) => {
 
     // Actions
     getProductsByCategory,
+    deleteProduct,
+    getProductById,
+    updateOrCreateProduct,
     addToCart,
     removeFromCart,
     updateCartItemQuantity,
@@ -599,7 +662,9 @@ const removeOrderItem = async (orderId, orderItemId) => {
     createOrder, 
     cancelOrder,
     updateOrderItemQuantity,
-    removeOrderItem
+    removeOrderItem, 
+    deleteCategory,
+    fetchCategory
 
   };
 

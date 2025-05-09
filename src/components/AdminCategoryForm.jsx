@@ -1,7 +1,7 @@
 // AdminCategoryForm.jsx
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useParams, useNavigate, Link } from 'react-router-dom'; // Import Link and useNavigate
+import { useAppContext } from '../context/AppContext';
 import '../styles/AdminProductForm.css';
 import '../styles/AdminCategoryForm.css';
 
@@ -35,13 +35,13 @@ const AdminCategoryForm = () => {
       setIsEditing(true);
       const fetchCategory = async () => {
         try {
-          const response = await axios.get(`http://localhost:5172/api/category/${id}`);
-          setCategory(response.data);
+          const response = await api.get(`/category/${id}`);
+          return response.data;
         } catch (err) {
           console.error('Failed to fetch category:', err);
         }
       };
-      fetchCategory();
+      setCategory(fetchCategory());
     }
   }, [id]);
 
@@ -67,11 +67,11 @@ const AdminCategoryForm = () => {
     try {
       if (isEditing) {
         // Update category if editing
-        await axios.put(`http://localhost:5172/api/category/${id}`, category);
+        await api.put(`/api/category/${id}`, category);
         alert('Category updated!');
       } else {
         // Create new category if not editing
-        await axios.post('http://localhost:5172/api/category', category);
+        await api.post('/api/category', category);
         alert('Category added!');
       }
       navigate('/admin/categories'); // After submission, navigate to categories page

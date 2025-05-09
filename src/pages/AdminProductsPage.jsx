@@ -1,47 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useAppContext } from '../context/AppContext';
 import { Link } from 'react-router-dom';
 import '../styles/AdminProductsPage.css';
 
 const AdminProductsPage = () => {
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [productsRes, categoriesRes] = await Promise.all([
-          axios.get('http://localhost:5172/api/product'),
-          axios.get('http://localhost:5172/api/category')
-        ]);
-
-        const productsWithCategories = productsRes.data.map(product => ({
-          ...product,
-          categoryName: product.categoryNames?.join(', ') || 'Uncategorized'
-        }));
-
-        setProducts(productsWithCategories);
-        setCategories(categoriesRes.data);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+  const {products, deleteProduct, loading, error} = useAppContext()
 
   const handleDelete = async (productId) => {
     if (window.confirm('Delete this product permanently?')) {
-      try {
-        await axios.delete(`http://localhost:5172/api/product/${productId}`);
-        setProducts(products.filter(p => p.id !== productId));
-      } catch (err) {
-        setError('Delete failed: ' + err.message);
-      }
+      deleteProduct(productId);
     }
   };
 

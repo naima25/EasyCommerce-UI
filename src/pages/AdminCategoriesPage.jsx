@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import {useAppContext} from '../context/AppContext'
 import { Link } from 'react-router-dom';
 import '../styles/AdminProductsPage.css';
 
@@ -17,33 +17,11 @@ import '../styles/AdminProductsPage.css';
 */
 
 const AdminCategoriesPage = () => {
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get('http://localhost:5172/api/category');
-        setCategories(response.data);
-        setLoading(false);
-      } catch (err) {
-        setError('Failed to load categories: ' + err.message);
-        setLoading(false);
-      }
-    };
-
-    fetchCategories();
-  }, []);
+  const {categories, loading, error, deleteCategory,fetchCategory} = useAppContext();
 
   const handleDelete = async (categoryId) => {
     if (window.confirm('Delete this category permanently?')) {
-      try {
-        await axios.delete(`http://localhost:5172/api/category/${categoryId}`);
-        setCategories(categories.filter((c) => c.id !== categoryId));
-      } catch (err) {
-        setError('Delete failed: ' + err.message);
-      }
+      deleteCategory(categoryId)
     }
   };
 

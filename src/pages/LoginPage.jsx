@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { loginUser } from '../services/AuthService';
+import { useNavigate } from 'react-router-dom';
+
   /* 
 LoginPage Component:
 This component allows users to log into the application by providing their email and password.
@@ -20,6 +22,8 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
+  
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -33,6 +37,7 @@ const LoginPage = () => {
         localStorage.setItem('token', response.token); 
         setSuccess('Login successful!');
         console.log('Logged in with token:', response.token);
+        navigate('/our-products');
       } else {
         setError('No token received.');
       }

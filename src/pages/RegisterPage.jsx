@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { registerUser } from '../services/AuthService';
+import { useNavigate } from 'react-router-dom';
 
 /*
   RegisterPage component:
@@ -14,6 +15,7 @@ const RegisterPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
 
   const handleRegister = async (event) => {
     event.preventDefault();
@@ -24,6 +26,7 @@ const RegisterPage = () => {
       const response = await registerUser(email, password);
       setSuccess('Registration successful! Check your email for verification.');
       console.log('Registration response:', response);
+      navigate('/our-products');
     } catch (err) {
       setError('Registration failed. Please try again.');
     }

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext';
+import { useNavigate } from 'react-router-dom';
 import '../styles/ProductCard.css';
 
 
@@ -13,15 +14,31 @@ import '../styles/ProductCard.css';
 */
 
 const ProductCard = ({ product }) => {
-  const { addToCart } = useAppContext(); // 🛒 Get addToCart from context
+  const { addToCart, isAuthenticated, userRole } = useAppContext(); // 🛒 Get addToCart from context
   const { name, price, imageUrl, id } = product;
+  const navigate = useNavigate();
   
   const [quantity, setQuantity] = useState(1); 
 
-  const handleAddToCart = () => {
-    addToCart({ ...product, quantity }); // 🛒 
-    setQuantity(1);
-  };
+  // const handleAddToCart = () => {
+  //   // if authenticated add to cart
+
+  //   addToCart({ ...product, quantity }); // 🛒 
+  //   setQuantity(1);
+    
+  // };
+
+const handleAddToCart = () => {
+  if (!isAuthenticated) {
+    navigate('/account');
+    return;
+  }
+
+  addToCart({ ...product, quantity }); 
+  setQuantity(1);
+};
+
+  
 
   const handleIncrease = () => {
     setQuantity(prev => prev + 1);

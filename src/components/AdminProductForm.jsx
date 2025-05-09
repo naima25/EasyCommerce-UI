@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useAppContext } from '../context/AppContext';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../styles/AdminProductForm.css'; 
 
@@ -16,6 +16,9 @@ const AdminProductForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const {categories,getProductById,updateOrCreateProduct } = useAppContext(); 
+
+
   const [product, setProduct] = useState({
     name: '',
     price: '',
@@ -23,39 +26,35 @@ const AdminProductForm = () => {
     imageUrl: '',
   });
 
-  const [categories, setCategories] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get('http://localhost:5172/api/category');
-        setCategories(response.data);
-      } catch (error) {
-        console.error('Failed to fetch categories:', error);
-      }
-    };
 
+useEffect(() => {
+  let isMounted = true; // Flag to track component mount status
+
+  const fetchProduct = async () => {
     if (id) {
       setIsEditing(true);
-      const fetchProduct = async () => {
-        try {
-          const response = await axios.get(`http://localhost:5172/api/product/${id}`);
-          setProduct({
-            ...response.data,
-            category: response.data.categoryIds?.[0] || '', // Assume first category ID if multiple
-          });
-        } catch (error) {
-          console.error('Failed to fetch product:', error);
+      try {
+        const productData = await getProductById(id);
+        if (isMounted) { // Only update state if component is still mounted
+          setProduct(productData);
         }
-      };
-      fetchProduct();
+      } catch (error) {
+        console.error("Failed to fetch product:", error);
+        // Handle error (e.g., show error message)
+      }
     } else {
       setIsEditing(false);
     }
+  };
 
-    fetchCategories();
-  }, [id]);
+  fetchProduct();
+
+  return () => {
+    isMounted = false; // Cleanup function to prevent state updates after unmount
+  };
+}, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -66,24 +65,7 @@ const AdminProductForm = () => {
     e.preventDefault();
 
     try {
-      if (isEditing) {
-        await axios.put(`http://localhost:5172/api/product/${id}`, product);
-        alert('Product updated!');
-      } else {
-        const createRes = await axios.post('http://localhost:5172/api/product', product);
-        const newProductId = createRes.data.id;
-
-        // Assign category
-        if (product.category) {
-          await axios.post('http://localhost:5172/api/productcategory', {
-            productid: newProductId,
-            categoryid: parseInt(product.category),
-          });
-        }
-
-        alert('Product added!');
-      }
-
+      updateOrCreateProduct(isEditing, id, FaProductHunt)
       navigate('/admin/products');
     } catch (error) {
       console.error('Error submitting form:', error);
