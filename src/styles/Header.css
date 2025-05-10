@@ -29,6 +29,12 @@ color: rgb(0, 0, 0);
 text-decoration: none;
 }
 
+.header-logo {
+  height: 100%; /* This makes the logo take the full height of the header */
+  max-height: 50px; /* Ensures the image doesn’t get too large */
+  width: auto; /* Maintains aspect ratio */
+}
+
 /* MENU LIST */
 .menu {
 display: flex;

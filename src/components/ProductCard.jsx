@@ -20,20 +20,11 @@ const ProductCard = ({ product }) => {
   
   const [quantity, setQuantity] = useState(1); 
 
-  // const handleAddToCart = () => {
-  //   // if authenticated add to cart
-
-  //   addToCart({ ...product, quantity }); // 🛒 
-  //   setQuantity(1);
-    
-  // };
-
 const handleAddToCart = () => {
   if (!isAuthenticated) {
     navigate('/account');
     return;
   }
-
   addToCart({ ...product, quantity }); 
   setQuantity(1);
 };
@@ -61,15 +52,19 @@ const handleAddToCart = () => {
       <p>${price.toFixed(2)}</p>
 
       <div className="add-to-cart-container">
-        <button className="add-to-cart-button" onClick={handleAddToCart}>
+        <button 
+          className="add-to-cart-button" 
+          onClick={handleAddToCart} 
+          disabled={userRole === "Admin"}
+        >
           Add to Cart
         </button>
 
-        <div className="quantity-buttons">
-          <button onClick={handleDecrease}>-</button>
+        {userRole === "Admin" ? <></> : <div className="quantity-buttons">
+          <button onClick={handleDecrease} disabled={userRole === "Admin"}>-</button>
           <span>{quantity}</span>
-          <button onClick={handleIncrease}>+</button>
-        </div>
+          <button onClick={handleIncrease} disabled={userRole === "Admin"}>+</button>
+        </div> }
       </div>
     </div>
   );

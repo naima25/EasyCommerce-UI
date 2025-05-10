@@ -10,6 +10,9 @@ export const AppProvider = ({ children }) => {
   const [userRole, setUserRole] = useState(null);
   const [userId, setUserId] = useState(null);
 
+  // refresh version
+  const [refresh, setRefresh] = useState(0)
+
   // App data state
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -63,7 +66,7 @@ export const AppProvider = ({ children }) => {
               }
             });
 
-          const fetchOrders = api.get(`/order`)
+          const fetchOrders = api.get(`/order?customerId=${userId}`)
             .then(res => setOrders(res.data))
             .catch(err => {
               if (err.response?.status === 404) {
@@ -89,7 +92,10 @@ export const AppProvider = ({ children }) => {
     console.log(products);
     console.log(cart)
     console.log(orders)
-  }, [token]);
+  }, [token, refresh]);
+
+  // Use this function to trigger a refresh.
+  const triggerRefresh = () => setRefresh(prev => prev + 1);
 
   // Auth functions
 
@@ -115,7 +121,31 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
+    const register = async (email, password) => {
+    try {
+      setLoading(true);
+      setError(null);
+      console.log("Email and passwor: ", {email, password})
+      const response = await api.post('/account/register', { email, password });
+      console.log("response: ", response)
+
+      if (!response.data.token) throw new Error('No token received');
+
+      const { token: newToken } = response.data;
+      localStorage.setItem('token', newToken);
+      setToken(newToken);
+      return { success: true };
+    } catch (error) {
+      const message = error.response?.data?.message || error.message || 'Registration failed';
+      setError(message);
+      logout();
+      return { success: false, message };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const logout = async () => {
     localStorage.removeItem('token');
     setToken(null);
     setUserRole(null);
@@ -153,11 +183,30 @@ export const AppProvider = ({ children }) => {
       };
 
   const updateOrCreateProduct = async (isEditing, id, product) => {
+    const {imageUrl, category, featured, name, price} = product
+    const productBodyBody =     {
+        id,
+        name, 
+        price,
+        featured,  
+        imageUrl
+    }
+    const productCategoryBody = {
+      productId: id, 
+      categoryId: category
+    }
     if (isEditing) {
-        await api.put(`/product/${id}`, product);
+        console.log("Editing product: ", productBodyBody)
+        await api.put(`/product/${id}`, productBodyBody);
+        console.log("Editing product category: ", productCategoryBody)
+        // // delete the product category relationship and then create a new one
+        // await api.delete(`/productcategory/${id}`)
+        // await api.post(`/productcategory`, productCategoryBody)
+        triggerRefresh()
         alert('Product updated!');
       } else {
-        const createRes = await api.post('/api/product', product);
+        console.log("Creating Product")
+        const createRes = await api.post('/product', product);
         const newProductId = createRes.data.id;
 
         // Assign category
@@ -167,7 +216,7 @@ export const AppProvider = ({ children }) => {
             categoryid: parseInt(product.category),
           });
         }
-
+        triggerRefresh()
         alert('Product added!');
       }
   }
@@ -243,19 +292,16 @@ export const AppProvider = ({ children }) => {
     const fetchCart = async (cartId, customerId) => {
       try {
         setLoading(true);
-        const response = await api.get(`/api/cart/${cartId}?customerId=${customerId}`);
-        if (!response.ok) throw new Error('Failed to fetch cart');
-        const data = await response.json();
-        console.log("data: ", data)
+        const response = await api.get(`/cart/${cartId}?customerId=${customerId}`);
+        const data = response.data; // Use response.data instead of response.json()
+        console.log("data: ", data);
         setCart(data); // Get the most recent cart
-        // check if cart is unique, if there is no cart returned 
       } catch (err) {
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
-
 
     const removeFromCart = async (productId) => {
       try {
@@ -544,64 +590,68 @@ const updateOrderItemQuantity = async (orderId, orderItemId, newQuantity) => {
 const removeOrderItem = async (orderId, orderItemId) => {
   try {
     setLoading(true);
-    
+    // console.log("Start removeOrderItem");
+
     // Find the order to update
     const orderToUpdate = orders.find(order => order.id === orderId);
     if (!orderToUpdate) {
       throw new Error('Order not found');
     }
+    console.log("#1 order items to modify: ", orderToUpdate);
 
     // Find the item to remove
-    const itemToRemove = orderToUpdate.orderItems.find(item => item.id === orderItemId);
-    console.log("Item to Remove:", itemToRemove);
+    const itemToRemove = orderToUpdate.orderItems.find(
+      item => String(item.id) === String(orderItemId)
+    );
+    console.log("#2 Item to Remove:", itemToRemove);
     if (!itemToRemove) {
       console.log("Item not found");
       throw new Error('Order item not found');
     }
 
-    // Filter out the removed item
-    const updatedOrderItems = orderToUpdate.orderItems.filter(
-      item => item.id !== orderItemId
-    );
+    // Filter out the removed item (using type coercion to string)
+    const updatedOrderItems = orderToUpdate.orderItems.filter((item) => {
+      console.log("Comparing:", String(item.id), "with", String(orderItemId));
+      return String(item.id) !== String(orderItemId);
+    });
+    console.log("#3 updated order items to modify: ", updatedOrderItems);
 
     // Calculate new total price
     const newPrice = orderToUpdate.price - (itemToRemove.quantity * itemToRemove.product.price);
-    console.log(updatedOrderItems); // Log to verify
+    console.log("#4 the new price is: ", newPrice);
 
-    // Prepare request body
-    const requestBody = {
-      id: orderId, // Order ID
-      customerId: orderToUpdate.customerId, // Customer ID
-      price: newPrice, // The updated price
-      orderDate: orderToUpdate.orderDate, // The updated order date
-      orderItems: updatedOrderItems.map(item => ({
-        id: item.id, // Order item ID (used to identify the specific item being updated)
-        productId: item.productId, // The product ID
-        quantity: item.quantity, // Updated quantity
-        product: item.product // Full product details (name, price, etc.)
-      }))
-    };
-    
-    console.log("Request Body:", requestBody); // Log to verify request body
-    
+    // // Prepare request body
+    // const requestBody = {
+    //   id: orderId, // Order ID
+    //   customerId: orderToUpdate.customerId, // Customer ID
+    //   price: newPrice, // The updated price
+    //   orderDate: orderToUpdate.orderDate, // The updated order date
+    //   orderItems: updatedOrderItems.map(item => ({
+    //     id: item.id,           // Order item ID
+    //     productId: item.productId, // The product ID
+    //     quantity: item.quantity,   // Updated quantity
+    //     product: item.product      // Full product details
+    //   }))
+    // };
+
+    // console.log("#5 Request Body:", requestBody); // Log to verify request body
 
     // Update on server
-    const response = await api.put(`/order/${orderId}`, requestBody);
+    const response = await api.delete(`/OrderItem/${orderItemId}`);
 
-    if (response.status !== 204) {
+    if (response.status < 200 || response.status >= 300) {
       throw new Error('Failed to remove order item');
     }
+    console.log("#6 updated order response: ", response);
 
-    // Update local state
+    // Optionally, update local state here if needed.
+    // For example:
     setOrders(prevOrders =>
       prevOrders.map(order =>
-        order.id === orderId
-          ? { ...order, orderItems: updatedOrderItems, price: newPrice }
-          : order
+        order.id === orderId ? { ...order, orderItems: updatedOrderItems, price: newPrice } : order
       )
     );
 
-    return true;
   } catch (err) {
     setError(err.message);
     return false;
@@ -609,7 +659,6 @@ const removeOrderItem = async (orderId, orderItemId) => {
     setLoading(false);
   }
 };
-
 
 const deleteCategory = async (categoryId) => {
   try {
@@ -637,6 +686,7 @@ const fetchCategory = async () => {
     userId,
     token,
     login,
+    register,
     logout,
 
     // Data

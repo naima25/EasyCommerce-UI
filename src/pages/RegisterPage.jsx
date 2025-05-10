@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { registerUser } from '../services/AuthService';
+import { useAppContext } from '../context/AppContext';
 import { useNavigate } from 'react-router-dom';
 
 /*
@@ -13,22 +13,21 @@ import { useNavigate } from 'react-router-dom';
 const RegisterPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
 
+  const {error, register} = useAppContext()
+
   const handleRegister = async (event) => {
     event.preventDefault();
-    setError('');
     setSuccess('');
 
     try {
-      const response = await registerUser(email, password);
-      setSuccess('Registration successful! Check your email for verification.');
-      console.log('Registration response:', response);
+      await register(email, password);
+      setSuccess('Registration successful!');
       navigate('/our-products');
     } catch (err) {
-      setError('Registration failed. Please try again.');
+      console.log("Registration error: ", err)
     }
   };
 

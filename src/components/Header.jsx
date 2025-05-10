@@ -33,7 +33,11 @@ const Header = () => {
           className={location.pathname === "/home" ? "active" : ""}
           onClick={closeMenu}
         >
-          Easy Commerce
+          <img
+            src="/EasyCommerce-icon.png"
+            alt="Logo"
+            className="header-logo"
+          />
         </Link>
       </div>
       <ul className={`menu ${isMenuOpen ? "active" : ""}`}>

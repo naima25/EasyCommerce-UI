@@ -65,7 +65,7 @@ useEffect(() => {
     e.preventDefault();
 
     try {
-      updateOrCreateProduct(isEditing, id, FaProductHunt)
+      updateOrCreateProduct(isEditing, id, product)
       navigate('/admin/products');
     } catch (error) {
       console.error('Error submitting form:', error);

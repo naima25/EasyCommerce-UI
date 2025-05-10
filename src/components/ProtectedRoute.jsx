@@ -2,7 +2,7 @@ import { useAppContext } from '../context/AppContext'; // Updated import
 import { Navigate } from 'react-router-dom';
 
   // checks the role and 
-  const ProtectedRoute = ({ role, element, fallback = '/account' }) => {
+  const ProtectedRoute = ({ role, element, fallback = '/our-products' }) => {
     const {userRole, loading, isAuthenticated} = useAppContext(); 
 
     if (loading) {

@@ -26,7 +26,7 @@ import AdminCategoryForm from './components/AdminCategoryForm'; // Import AdminC
 import './App.css';
 
 const App = () => {
-  const { protectedRoute } = useAppContext();
+  const { isAuthenticated } = useAppContext();
 
   return (
       <Router>
@@ -37,7 +37,7 @@ const App = () => {
               {/* Public Routes */}
               <Route path="/" element={<Home />} />
               <Route path="/home" element={<Home />} />
-              <Route path="/account" element={<AccountPage />} />
+              <Route path="/account" element={isAuthenticated ? <Navigate to="/our-products" replace /> : <AccountPage />} />
               <Route path="/about-us" element={<AboutUs />} />
               <Route path="/our-products" element={<OurProducts />} />
               {/* A route for categories that redirects to the 'Our Products' page */}

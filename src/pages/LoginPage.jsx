@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { loginUser } from '../services/AuthService';
+import { useAppContext } from '../context/AppContext';
 import { useNavigate } from 'react-router-dom';
 
   /* 
@@ -20,29 +20,23 @@ The component uses controlled components for handling form data and updates the 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
+
+  const {login,error} = useAppContext()
+
   
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    setError('');
     setSuccess('');
 
     try {
-      const response = await loginUser(email, password);
-
-      if (response.token) {
-        localStorage.setItem('token', response.token); 
-        setSuccess('Login successful!');
-        console.log('Logged in with token:', response.token);
-        navigate('/our-products');
-      } else {
-        setError('No token received.');
-      }
+      await login(email, password);
+      setSuccess('Login successful!');
+      navigate('/our-products')
     } catch (err) {
-      setError('Login failed. Please check your credentials.');
+      console.log("Login Error: ", err)
     }
   };
 
