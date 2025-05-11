@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { Link } from 'react-router-dom';
 import '../styles/AdminProductsPage.css';
@@ -53,7 +52,7 @@ const AdminProductsPage = () => {
               </td>
               <td>{product.name}</td>
               <td>EasyCommerce</td>
-              <td>{product.categoryName}</td>
+              <td>{product.categoryNames}</td>
               <td>${product.price?.toFixed(2)}</td> {/* New price cell */}
               <td className="action-buttons">
                 <Link 

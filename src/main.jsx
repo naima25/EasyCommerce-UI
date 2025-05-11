@@ -4,7 +4,7 @@
   - Entry point for the React application.
   - StrictMode: Enforces additional checks and warnings for potential issues during development.
   - AppProvider: Wraps the App component with a context provider to share state across the application.
-  - createRoot: Initializes the root of the React app and renders the App component to the DOM.
+  - createRoot: Initialises the root of the React app and renders the App component to the DOM.
   - index.css: Global styles are applied to the application.
 */
 

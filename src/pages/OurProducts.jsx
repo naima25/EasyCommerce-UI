@@ -7,7 +7,6 @@ import '../styles/OurProducts.css';
   OurProducts component:
   - Displays a list of product categories with the option to filter products by category.
   - Includes a "View All Products" button to reset the filter and show all products.
-  - Uses `useEffect` to set and shuffle the list of products when data is loaded.
   - Handles category selection and updates the display of filtered products accordingly.
 */
 

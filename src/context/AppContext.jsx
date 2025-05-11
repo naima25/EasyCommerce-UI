@@ -620,22 +620,6 @@ const removeOrderItem = async (orderId, orderItemId) => {
     const newPrice = orderToUpdate.price - (itemToRemove.quantity * itemToRemove.product.price);
     console.log("#4 the new price is: ", newPrice);
 
-    // // Prepare request body
-    // const requestBody = {
-    //   id: orderId, // Order ID
-    //   customerId: orderToUpdate.customerId, // Customer ID
-    //   price: newPrice, // The updated price
-    //   orderDate: orderToUpdate.orderDate, // The updated order date
-    //   orderItems: updatedOrderItems.map(item => ({
-    //     id: item.id,           // Order item ID
-    //     productId: item.productId, // The product ID
-    //     quantity: item.quantity,   // Updated quantity
-    //     product: item.product      // Full product details
-    //   }))
-    // };
-
-    // console.log("#5 Request Body:", requestBody); // Log to verify request body
-
     // Update on server
     const response = await api.delete(`/OrderItem/${orderItemId}`);
 
@@ -644,8 +628,7 @@ const removeOrderItem = async (orderId, orderItemId) => {
     }
     console.log("#6 updated order response: ", response);
 
-    // Optionally, update local state here if needed.
-    // For example:
+   
     setOrders(prevOrders =>
       prevOrders.map(order =>
         order.id === orderId ? { ...order, orderItems: updatedOrderItems, price: newPrice } : order
@@ -659,6 +642,30 @@ const removeOrderItem = async (orderId, orderItemId) => {
     setLoading(false);
   }
 };
+
+const getCategoryById = async (id) => {
+  try {
+    const response = await api.get(`/category/${id}`);
+    return { "name": response.data?.name}
+  } catch (error) {
+    console.error('Failed to fetch category:', error);
+  }
+}
+
+const updateOrCreateCategory = async (isEditing, id, category) => {
+  console.log("Category: ", category)
+        if (isEditing) {
+        // Update category if editing
+        await api.put(`/category/${id}`, category);
+        triggerRefresh()
+        alert('Category updated!');
+      } else {
+        // Create new category if not editing
+        await api.post('/category', category);
+        triggerRefresh()
+        alert('Category added!');
+      }
+}
 
 const deleteCategory = async (categoryId) => {
   try {
@@ -713,6 +720,8 @@ const fetchCategory = async () => {
     cancelOrder,
     updateOrderItemQuantity,
     removeOrderItem, 
+    getCategoryById,
+    updateOrCreateCategory,
     deleteCategory,
     fetchCategory
 

@@ -6,74 +6,57 @@ import '../styles/AdminProductForm.css';
 import '../styles/AdminCategoryForm.css';
 
 const AdminCategoryForm = () => {
-  /*
-    Get the category ID from the URL (if we're editing an existing category).
-    Also set up a tool (navigate) to move to a different page after saving.
-  */
+
   const { id } = useParams(); 
   const navigate = useNavigate();
 
-    /*
-    Set up the form's starting values.
-    Right now, we only have one field: name.
-    Also track whether we're editing an existing category or adding a new one.
-  */
+   
 
   const [category, setCategory] = useState({
     name: '',
   });
   const [isEditing, setIsEditing] = useState(false);
 
-    /*
-    When the page loads, check if there's a category ID.
-    If there is, we're editing, so go get the category info from the server.
-  */
+  const {updateOrCreateCategory, getCategoryById} = useAppContext();
+
 
   useEffect(() => {
-    // If we have a category ID, fetch the category data for editing
+  let isMounted = true; // Flag to track component mount status
+
+  const fetchCategory = async () => {
     if (id) {
       setIsEditing(true);
-      const fetchCategory = async () => {
-        try {
-          const response = await api.get(`/category/${id}`);
-          return response.data;
-        } catch (err) {
-          console.error('Failed to fetch category:', err);
+      try {
+        const categoryData = await getCategoryById(id);
+        if (isMounted) { // Only update state if component is still mounted
+          setCategory(categoryData);
         }
-      };
-      setCategory(fetchCategory());
+      } catch (error) {
+        console.error("Failed to fetch category:", error);
+        // Handle error (e.g., show error message)
+      }
+    } else {
+      setIsEditing(false);
     }
-  }, [id]);
+  };
 
-    /*
-    Update the form whenever the user types something.
-    This keeps track of what they type into the input box.
-  */
+  fetchCategory();
+
+  return () => {
+    isMounted = false; // Cleanup function to prevent state updates after unmount
+  };
+}, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCategory((prev) => ({ ...prev, [name]: value }));
   };
 
-    /*
-    When the user submits the form:
-    - If editing, update the existing category.
-    - If adding, create a new one.
-    Then show a message and go back to the categories list.
-  */
- 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (isEditing) {
-        // Update category if editing
-        await api.put(`/api/category/${id}`, category);
-        alert('Category updated!');
-      } else {
-        // Create new category if not editing
-        await api.post('/api/category', category);
-        alert('Category added!');
-      }
+      updateOrCreateCategory(isEditing, id, category)
       navigate('/admin/categories'); // After submission, navigate to categories page
     } catch (err) {
       console.error('Error submitting form:', err);

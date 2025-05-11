@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../styles/Header.css";
+import logo from '../assets/EasyCommerce-icon.svg';
 import { useAppContext } from "../context/AppContext"; 
 import { FaShoppingCart } from "react-icons/fa";
 
@@ -24,20 +25,17 @@ const Header = () => {
   };
 
   const totalCartQuantity = cart?.cartItems?.reduce((sum, item) => sum + item.quantity, 0) || 0;
-
+  console.log(logo)
   return (
     <nav>
       <div className="logo">
         <Link
           to="/home"
-          className={location.pathname === "/home" ? "active" : ""}
+          className={`header-logo-link ${location.pathname === '/home' ? 'active' : ''}`}
           onClick={closeMenu}
         >
-          <img
-            src="/EasyCommerce-icon.png"
-            alt="Logo"
-            className="header-logo"
-          />
+          <img src={logo} alt="Easy Commerce logo" className="header-logo" />
+          <span className="header-logo-text"><span className="header-logo-text-easy">Easy</span>Commerce</span>
         </Link>
       </div>
       <ul className={`menu ${isMenuOpen ? "active" : ""}`}>
@@ -103,22 +101,11 @@ const Header = () => {
 
         {/* Auth Links - conditionally shown based on authentication status */}
         {isAuthenticated ? (
-          <>
-            <li>
-              <Link
-                to="/profile"
-                className={location.pathname === "/profile" ? "active" : ""}
-                onClick={closeMenu}
-              >
-                Profile
-              </Link>
-            </li>
-            <li>
-              <Link to="#" onClick={handleLogout}>
-                Logout
-              </Link>
-            </li>
-          </>
+          <li>
+            <Link to="#" onClick={handleLogout}>
+              Logout
+            </Link>
+          </li>
         ) : (
           <li>
             <Link

@@ -16,19 +16,19 @@ function HomePage() {
         <div className="card-grid">
           {[
             {
-              title: "Yves Saint Laurent Rouge Pur Couture Lipstick",
-              price: "36.00",
-              image: "https://media.johnlewiscontent.com/i/JohnLewis/111119525?fmt=auto&$background-off-white$&wid=640&hei=853"
+              title: "Elemis Superfood Midnight Facial, 50ml",
+              price: "46.00",
+              image: "https://media.johnlewiscontent.com/i/JohnLewis/240516699?fmt=auto&$background-off-white$&wid=640&hei=853"
             },
             { 
-              title: "ERDEM Double Breasted Twill Blazer", 
-              price: "1795.00", 
-              image: "https://media.johnlewiscontent.com/i/JohnLewis/009833409alt3?fmt=auto&$background-off-white$&wid=640&hei=853" 
+              title: "Dior Maximizer Lip Gloss", 
+              price: "46", 
+              image: "https://media.johnlewiscontent.com/i/JohnLewis/238486903?fmt=auto&$background-off-white$&wid=640&hei=853" 
             },
             { 
-              title: "Nars: Dolce blush", 
-              price: "27.00", 
-              image: "https://media.johnlewiscontent.com/i/JohnLewis/111530320?fmt=auto&$background-off-white$&wid=640&hei=853"
+              title: "Clarins Super Restorative Night Cream, All Skin Types, 50ml", 
+              price: "89.00", 
+              image: "https://media.johnlewiscontent.com/i/JohnLewis/241054352alt1?fmt=auto&$background-off-white$&wid=640&hei=853"
             }
           ].map((product, index) => (
             <div key={index} className="card">
@@ -40,7 +40,7 @@ function HomePage() {
         </div>
       </section>
     </div>
-  ); // ✅ Closing the return JSX here
+  ); 
 }
 
 export default HomePage;

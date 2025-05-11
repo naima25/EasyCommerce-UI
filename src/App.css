@@ -4,7 +4,6 @@
 
   - #root: Centers content with a max width of 1280px, adds padding and center alignment.
   - .logo: Styles the logo with a hover effect (drop-shadow) and smooth transition.
-  - logo-spin: Animates the logo to rotate 360 degrees infinitely if motion preferences allow.
   - .card: Adds padding to card components.
   - .read-the-docs: Colors the "Read the Docs" link with a subtle gray.
 

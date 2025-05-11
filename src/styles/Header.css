@@ -22,18 +22,30 @@ box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 /* LOGO */
-.logo a {
-font-size: 16px;
-font-weight: 400;
-color: rgb(0, 0, 0);
-text-decoration: none;
+.header-logo-link {
+  display: inline-flex;       /* line up image + text */
+  align-items: center;        /* vertical-center them */
+  text-decoration: none;      /* if you don’t want the underline */
 }
 
 .header-logo {
-  height: 100%; /* This makes the logo take the full height of the header */
-  max-height: 50px; /* Ensures the image doesn’t get too large */
-  width: auto; /* Maintains aspect ratio */
+  width: 2rem;                /* or whatever size you like */
+  height: auto;
 }
+
+.header-logo-text {
+  margin-left: 0.5rem;        /* spacing between logo & text */
+  font-size: 1.25rem;         /* adjust as needed */
+  font-weight: bold;
+  color: #e9468a;             /* match link color */
+}
+.header-logo-text-easy {
+  margin-left: 0.5rem;        /* spacing between logo & text */
+  font-size: 1.25rem;         /* adjust as needed */
+  font-weight: bold;
+  color: black;             /* match link color */
+}
+
 
 /* MENU LIST */
 .menu {
